@@ -1,0 +1,124 @@
+:host {
+  display: inline-block;
+  width: auto;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  user-select: none;
+  width: 100%;
+  outline: none;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px var(--color-focus, rgba(99, 102, 241, 0.4));
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Sizes
+.btn-sm {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  height: 36px;
+}
+
+.btn-md {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  height: 42px;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.75rem;
+  font-size: 1rem;
+  height: 48px;
+}
+
+// Variants
+.btn-primary {
+  background: var(--color-primary, #6366f1);
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-hover, #4f46e5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.btn-secondary {
+  background: var(--color-secondary, #1e293b);
+  color: var(--color-text-primary, #f8fafc);
+  border-color: var(--color-border, #334155);
+
+  &:hover:not(:disabled) {
+    background: var(--color-secondary-hover, #334155);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary, #6366f1);
+  border-color: var(--color-primary, #6366f1);
+
+  &:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.05);
+    transform: translateY(-1px);
+  }
+}
+
+.btn-danger {
+  background: var(--color-danger, #ef4444);
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background: var(--color-danger-hover, #dc2626);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+  }
+}
+
+// Loading state
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 0.6s linear infinite;
+  position: absolute;
+}
+
+.invisible {
+  opacity: 0;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,131 @@
+<div class="courses-layout">
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M13 14h3"/></svg>
+        <span>CodeBlog Academy</span>
+      </div>
+      <nav class="nav-links">
+        <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+        <a routerLink="/courses" class="nav-link active">Courses</a>
+      </nav>
+      <div class="user-menu">
+        @if (authService.isAuthenticated()) {
+          <button class="btn-logout" (click)="logout()">Sign Out</button>
+        } @else {
+          <a routerLink="/login" class="nav-link-login">Sign In</a>
+        }
+      </div>
+    </div>
+  </header>
+
+  <main class="courses-content">
+    <!-- Header -->
+    <header class="page-header">
+      <h2>Explore Courses</h2>
+      <p>Upgrade your engineering skills with hands-on labs and premium guides</p>
+    </header>
+
+    <!-- Filters Section -->
+    <section class="filters-panel">
+      <!-- Search Input -->
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          placeholder="Search by title, description, or instructor..."
+          [value]="searchQuery()"
+          (input)="updateSearch($event)"
+          aria-label="Search courses"
+        />
+      </div>
+
+      <!-- Categories Filter -->
+      <div class="filter-group">
+        <span class="filter-label">Category:</span>
+        <div class="filter-options">
+          @for (cat of categories; track cat) {
+            <button
+              type="button"
+              class="filter-chip"
+              [class.active]="selectedCategory() === cat"
+              (click)="setCategory(cat)">
+              {{ cat }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Difficulties Filter -->
+      <div class="filter-group">
+        <span class="filter-label">Difficulty:</span>
+        <div class="filter-options">
+          @for (diff of difficulties; track diff) {
+            <button
+              type="button"
+              class="filter-chip"
+              [class.active]="selectedDifficulty() === diff"
+              (click)="setDifficulty(diff)">
+              {{ diff }}
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Courses Grid -->
+    <section class="courses-grid-section">
+      @if (filteredCourses().length === 0) {
+        <div class="no-results">
+          <span class="icon">🔍</span>
+          <h4>No courses matched your filters</h4>
+          <p>Try clearing your search query or choosing different category settings.</p>
+        </div>
+      } @else {
+        <div class="courses-grid">
+          @for (course of filteredCourses(); track course.id) {
+            <div class="course-card">
+              <!-- Thumbnail -->
+              <div class="thumbnail-wrapper">
+                <img [src]="course.thumbnail" [alt]="course.title" class="course-thumb" />
+                <span class="category-badge">{{ course.category }}</span>
+              </div>
+
+              <!-- Body -->
+              <div class="card-body">
+                <div class="card-meta">
+                  <span class="difficulty {{ course.difficulty.toLowerCase() }}">{{ course.difficulty }}</span>
+                  <span class="xp-badge">+{{ course.xpReward }} XP</span>
+                </div>
+                <h3>{{ course.title }}</h3>
+                <p class="desc">{{ course.description }}</p>
+                <div class="details">
+                  <span>🕒 {{ course.duration }}</span>
+                  <span>📖 {{ course.lessonsCount }} lessons</span>
+                  <span>👥 {{ course.studentsCount }} students</span>
+                </div>
+
+                <!-- Action button -->
+                <div class="card-footer">
+                  @if (course.enrolled) {
+                    <a routerLink="/dashboard" class="enrolled-link">
+                      Enrolled — View Dashboard
+                    </a>
+                  } @else {
+                    <app-button
+                      variant="primary"
+                      size="md"
+                      (btnClick)="enrollInCourse(course.id)">
+                      Enroll in Course
+                    </app-button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

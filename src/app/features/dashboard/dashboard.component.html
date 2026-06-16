@@ -1,0 +1,139 @@
+<div class="dashboard-layout">
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M13 14h3"/></svg>
+        <span>CodeBlog Academy</span>
+      </div>
+      <nav class="nav-links">
+        <a routerLink="/dashboard" class="nav-link active">Dashboard</a>
+        <a routerLink="/courses" class="nav-link">Courses</a>
+      </nav>
+      <div class="user-menu">
+        <button class="btn-logout" (click)="logout()">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+    <!-- Profile Hero -->
+    @if (currentUser(); as user) {
+      <section class="profile-hero">
+        <div class="profile-info">
+          <div class="avatar-badge">
+            <span class="avatar-emoji">💻</span>
+          </div>
+          <div class="profile-text">
+            <h2>Welcome back, {{ user.name }}!</h2>
+            <p class="role-badge" [class.admin]="user.role === 'admin'">
+              {{ user.role === 'admin' ? 'Instructor' : 'Student' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="level-progress-container">
+          <div class="level-header">
+            <span class="level-label">Level {{ user.level || 1 }}</span>
+            <span class="xp-ratio">{{ user.xp || 0 }} / {{ nextLevelXp() }} XP</span>
+          </div>
+          <div class="xp-progress-bar">
+            <div class="xp-fill" [style.width]="xpProgressPercentage() + '%'"></div>
+          </div>
+          <p class="xp-helper">Gain XP by enrolling and completing courses!</p>
+        </div>
+      </section>
+    }
+
+    <!-- Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">✨</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ currentUser()?.xp || 0 }}</span>
+          <span class="stat-label">Total XP</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">👑</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ currentUser()?.level || 1 }}</span>
+          <span class="stat-label">Rank Level</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📚</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ enrolledCourses().length }}</span>
+          <span class="stat-label">Enrolled Courses</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">📈</span>
+        <div class="stat-info">
+          <span class="stat-val">{{ totalProgress() }}%</span>
+          <span class="stat-label">Overall Completion</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- My Courses Section -->
+    <section class="courses-section">
+      <div class="section-header">
+        <h3>My Enrolled Courses</h3>
+        @if (enrolledCourses().length > 0) {
+          <button class="btn-text" (click)="resetProgress()">Reset All Progress</button>
+        }
+      </div>
+
+      @if (enrolledCourses().length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">📂</div>
+          <h4>No enrolled courses found</h4>
+          <p>You haven't joined any courses yet. Browse our library to start learning!</p>
+          <app-button routerLink="/courses" variant="primary">
+            Explore Courses
+          </app-button>
+        </div>
+      } @else {
+        <div class="course-list-grid">
+          @for (course of enrolledCourses(); track course.id) {
+            <div class="course-progress-card">
+              <div class="course-card-top">
+                <img [src]="course.thumbnail" [alt]="course.title" class="course-img" />
+                <div class="course-badge">{{ course.difficulty }}</div>
+              </div>
+              <div class="course-card-body">
+                <h4>{{ course.title }}</h4>
+                <p class="instructor">Instructor: {{ course.instructorName }}</p>
+                
+                <div class="progress-section">
+                  <div class="progress-details">
+                    <span>Progress</span>
+                    <span class="pct">{{ course.progress || 0 }}%</span>
+                  </div>
+                  <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" [style.width]="(course.progress || 0) + '%'" [class.completed]="course.progress === 100"></div>
+                  </div>
+                </div>
+
+                <div class="card-actions">
+                  @if (course.progress === 100) {
+                    <div class="completed-badge">✓ Completed ({{ course.xpReward }} XP)</div>
+                  } @else {
+                    <app-button 
+                      variant="outline" 
+                      size="sm" 
+                      (btnClick)="incrementProgress(course.id, course.progress || 0)">
+                      Study (+25%)
+                    </app-button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

@@ -1,0 +1,63 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="brand-header">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M13 14h3"/></svg>
+      </div>
+      <h1>CodeBlog Academy</h1>
+      <p class="subtitle">Elevate your skills on our modern LMS platform</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      @if (errorMessage()) {
+        <div class="alert-error" role="alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <app-input
+        id="email"
+        label="Email Address"
+        type="email"
+        placeholder="you@example.com"
+        [control]="emailControl"
+        [error]="emailControl.touched && emailControl.hasError('required') ? 'Email is required' : (emailControl.touched && emailControl.hasError('email') ? 'Please enter a valid email address' : '')"
+      />
+
+      <app-input
+        id="password"
+        label="Password"
+        type="password"
+        placeholder="••••••••"
+        [control]="passwordControl"
+        [error]="passwordControl.touched && passwordControl.hasError('required') ? 'Password is required' : (passwordControl.touched && passwordControl.hasError('minlength') ? 'Password must be at least 6 characters' : '')"
+      />
+
+      <div class="form-actions">
+        <app-button
+          type="submit"
+          variant="primary"
+          size="lg"
+          [loading]="isLoading()"
+          [disabled]="loginForm.invalid">
+          Sign In
+        </app-button>
+      </div>
+    </form>
+
+    <div class="divider">
+      <span>Demo Accounts</span>
+    </div>
+
+    <div class="demo-buttons">
+      <button type="button" class="btn-demo student" (click)="fillMockStudent()">
+        <span class="icon">👤</span>
+        <span class="text">Student Demo</span>
+      </button>
+      <button type="button" class="btn-demo admin" (click)="fillMockAdmin()">
+        <span class="icon">⚡</span>
+        <span class="text">Instructor Demo</span>
+      </button>
+    </div>
+  </div>
+</div>

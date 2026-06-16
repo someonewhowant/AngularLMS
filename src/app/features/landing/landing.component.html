@@ -1,0 +1,203 @@
+<div class="landing-wrapper">
+  <!-- Public Header/Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+          <path d="M6 6h10"/>
+          <path d="M6 10h10"/>
+          <path d="M13 14h3"/>
+        </svg>
+        <span>CodeBlog Academy</span>
+      </div>
+      <nav class="nav-links">
+        <a routerLink="/" class="nav-link active">Home</a>
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/courses" class="nav-link">Courses</a>
+          <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+        }
+      </nav>
+      <div class="auth-actions">
+        @if (authService.isAuthenticated()) {
+          <app-button routerLink="/dashboard" variant="secondary" size="sm">Go to Dashboard</app-button>
+        } @else {
+          <app-button routerLink="/login" variant="outline" size="sm" class="btn-login-header">Sign In</app-button>
+          <app-button routerLink="/login" variant="primary" size="sm">Start Free</app-button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <!-- Decorative Glow Elements -->
+    <div class="glow-orb glow-top-left"></div>
+    <div class="glow-orb glow-bottom-right"></div>
+    <div class="grid-overlay"></div>
+
+    <div class="hero-content">
+      <div class="announcement-badge">
+        <span class="badge-tag">New</span>
+        <span class="badge-text">Angular standalone architecture implemented</span>
+      </div>
+
+      <h1 class="hero-title">
+        Master Backend Engineering with <span class="gradient-text">Real-World</span> Projects
+      </h1>
+
+      <p class="hero-subtitle">
+        Stop watching tutorials. Start building enterprise-grade applications. Our interactive platform bridges the gap between theory and production-ready backend skills.
+      </p>
+
+      <div class="hero-buttons">
+        @if (authService.isAuthenticated()) {
+          <app-button routerLink="/dashboard" variant="primary" size="lg">Go to Dashboard</app-button>
+        } @else {
+          <app-button routerLink="/login" variant="primary" size="lg">Start Learning Free</app-button>
+        }
+        <app-button routerLink="/login" variant="outline" size="lg">
+          Explore Curriculum
+        </app-button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">50+</div>
+          <div class="stat-label">Hands-on Projects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">10k</div>
+          <div class="stat-label">Active Students</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4.9</div>
+          <div class="stat-label">Average Rating</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">85%</div>
+          <div class="stat-label">Hiring Rate</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Learning Paths Section -->
+  <section class="featured-section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Featured Learning Paths</h2>
+          <p class="section-subtitle">
+            Curated curricula designed to take you from fundamentals to advanced backend architecture.
+          </p>
+        </div>
+        <app-button routerLink="/login" variant="outline" size="md">
+          View All Paths &rarr;
+        </app-button>
+      </div>
+
+      <div class="courses-grid">
+        @for (course of featuredCourses(); track course.id) {
+          <div class="course-card">
+            <div class="course-card-image">
+              <img [src]="course.thumbnail" [alt]="course.title" />
+              <div class="course-level-badge" [class]="course.difficulty.toLowerCase()">
+                {{ course.difficulty }}
+              </div>
+              <div class="course-category-tag">
+                {{ course.category }}
+              </div>
+            </div>
+            <div class="course-card-content">
+              <h3 class="course-card-title">{{ course.title }}</h3>
+              <p class="course-card-desc">{{ course.description }}</p>
+              
+              <div class="course-card-meta">
+                <div class="meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+                  </svg>
+                  <span>{{ course.duration }}</span>
+                </div>
+                <div class="meta-item">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.5 6.027a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm2.5-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm-2.5-3a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm-.5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
+                    <path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2z"/>
+                  </svg>
+                  <span>{{ course.lessonsCount }} Lessons</span>
+                </div>
+              </div>
+
+              <div class="course-card-actions">
+                @if (authService.isAuthenticated()) {
+                  <app-button routerLink="/courses" variant="primary" size="md">Enroll &amp; Play</app-button>
+                } @else {
+                  <app-button routerLink="/login" variant="primary" size="md">Start Learning</app-button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Proposition Section -->
+  <section class="value-section">
+    <div class="container">
+      <div class="section-center-header">
+        <h2 class="section-title">Why CodeBlog Academy?</h2>
+        <p class="section-subtitle">
+          We focus on depth, not just syntax. Learn the architecture, patterns, and decisions that senior engineers make.
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">🏛️</div>
+          <h3 class="benefit-title">System Design First</h3>
+          <p class="benefit-desc">
+            Don't just write code. Understand how to design scalable, fault-tolerant backend architectures.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🖥️</div>
+          <h3 class="benefit-title">Interactive Environment</h3>
+          <p class="benefit-desc">
+            Code directly in the browser with our integrated development environment. No setup required.
+          </p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">👥</div>
+          <h3 class="benefit-title">Active Community</h3>
+          <p class="benefit-desc">
+            Join thousands of developers. Get help, review code, and participate in weekly technical challenges.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <h2 class="cta-title">Ready to elevate your engineering career?</h2>
+      <p class="cta-desc">Join CodeBlog Academy today and get access to our complete curriculum.</p>
+      @if (authService.isAuthenticated()) {
+        <app-button routerLink="/dashboard" variant="primary" size="lg">Go to Dashboard</app-button>
+      } @else {
+        <app-button routerLink="/login" variant="primary" size="lg">Create Free Account</app-button>
+      }
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p>&copy; 2026 CodeBlog Academy. All rights reserved. Created with high-fidelity Angular templates.</p>
+    </div>
+  </footer>
+</div>
