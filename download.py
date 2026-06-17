@@ -1,0 +1,3 @@
+import urllib.request
+url = 'https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2NiY2NmMzUxODFlMzQyNzQ4NzcyMTc1YWI0MmZkZTQ0EgsSBxCp9My8jRYYAZIBJAoKcHJvamVjdF9pZBIWQhQxMjAwMTA0OTEwMDU3ODg0NzA3Mw&filename=&opi=96797242'
+urllib.request.urlretrieve(url, 'teacher-dashboard.html')
