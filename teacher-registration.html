@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Become an Instructor | CodeBlog Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#10131a",
+                        "surface-variant": "#32353c",
+                        "on-secondary-fixed": "#111c2d",
+                        "on-surface": "#e1e2ec",
+                        "on-primary-fixed": "#001a42",
+                        "on-tertiary-fixed-variant": "#723600",
+                        "surface-container-high": "#272a31",
+                        "secondary-container": "#3e495d",
+                        "on-secondary": "#263143",
+                        "inverse-on-surface": "#2e3038",
+                        "surface-dim": "#10131a",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#d8e3fb",
+                        "on-tertiary-container": "#461f00",
+                        "surface-tint": "#adc6ff",
+                        "secondary": "#bcc7de",
+                        "on-tertiary-fixed": "#311400",
+                        "on-primary-container": "#00285d",
+                        "surface-container-low": "#191b23",
+                        "tertiary": "#ffb786",
+                        "on-primary-fixed-variant": "#004395",
+                        "on-secondary-container": "#aeb9d0",
+                        "on-error": "#690005",
+                        "surface": "#10131a",
+                        "surface-container-highest": "#32353c",
+                        "inverse-primary": "#005ac2",
+                        "tertiary-fixed": "#ffdcc6",
+                        "outline": "#8c909f",
+                        "on-surface-variant": "#c2c6d6",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb786",
+                        "tertiary-container": "#df7412",
+                        "surface-container-lowest": "#0b0e15",
+                        "surface-bright": "#363941",
+                        "outline-variant": "#424754",
+                        "on-primary": "#002e6a",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "on-tertiary": "#502400",
+                        "on-background": "#e1e2ec",
+                        "primary-fixed-dim": "#adc6ff",
+                        "primary": "#adc6ff",
+                        "inverse-surface": "#e1e2ec",
+                        "surface-container": "#1d2027",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "primary-fixed": "#d8e2ff",
+                        "primary-container": "#4d8eff",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "lg": "48px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "xl": "80px",
+                        "md": "24px",
+                        "margin-desktop": "64px",
+                        "sm": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "display-lg-mobile": ["JetBrains Mono"],
+                        "code-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "code-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .technical-bg {
+            background-image: 
+                linear-gradient(rgba(16, 19, 26, 0.95), rgba(16, 19, 26, 0.95)),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            background-size: auto, 100px 100px;
+        }
+
+        .code-grid {
+            background-image: radial-gradient(circle at 2px 2px, #1e293b 1px, transparent 0);
+            background-size: 32px 32px;
+        }
+
+        .dropzone-active {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-left-width: 4px;
+            padding-left: calc(0.75rem - 3px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md technical-bg min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+<!-- Header (Suppressed Nav Shell as per Task-Focused/Linear Rule) -->
+<header class="w-full h-20 px-margin-mobile md:px-margin-desktop flex items-center justify-between max-w-[1440px] mx-auto z-10">
+<div class="flex items-center gap-xs">
+<img alt="CodeBlog Academy Logo" class="h-10 w-10" src="https://lh3.googleusercontent.com/aida/AP1WRLto0WOZaYlJ_aRCunvzXGKXR4uaXisCXPMr2F2pnlZQ-VYkUCi3KUk3dQs6l1tvQQX3jaSz8bfNtyHSfEyPNWZcs4fQlhWgWPo46po0OhQ9RF3JBzd1rfHwgQZ49w-Ny9CoyHWypSgIgprwq9q430I2ytyZolo1ub8wSX6K9HWjefIippcJiZat1pkrrXeqs5B--LrvclMnj26XtYdPEK8wjh7ov_x0KDrFIBNNJ_55FaMfE76Kih32PV0y"/>
+<span class="font-display-lg text-[24px] text-primary tracking-tighter">CodeBlog Academy</span>
+</div>
+<a class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-code-sm text-code-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+            Back to Home
+        </a>
+</header>
+<main class="relative z-0 flex items-center justify-center py-xl px-margin-mobile overflow-hidden">
+<!-- Background Animation/Decoration -->
+<div class="absolute inset-0 code-grid opacity-20 pointer-events-none"></div>
+<div class="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-tertiary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<!-- Application Card -->
+<div class="relative w-full max-w-[800px] bg-surface-container-low border border-outline-variant rounded-lg overflow-hidden shadow-2xl transition-all duration-300">
+<!-- Subtle code-themed border top -->
+<div class="h-1 w-full bg-gradient-to-r from-primary/50 via-primary to-primary/50"></div>
+<div class="p-md md:p-xl">
+<div class="mb-lg">
+<h1 class="font-headline-md text-headline-md text-on-surface mb-xs">Become an Instructor</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Share your engineering expertise with thousands of students.</p>
+</div>
+<form class="space-y-md">
+<!-- Grid Layout for Personal Info -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Full Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-sm text-on-surface placeholder:text-surface-variant focus:border-primary transition-all duration-200" placeholder="e.g. Linus Torvalds" type="text"/>
+</div>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Email Address</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-sm text-on-surface placeholder:text-surface-variant focus:border-primary transition-all duration-200" placeholder="dev@company.io" type="email"/>
+</div>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">LinkedIn Profile URL</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-sm text-on-surface placeholder:text-surface-variant focus:border-primary transition-all duration-200" placeholder="linkedin.com/in/username" type="url"/>
+</div>
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Current Job Title / Company</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-sm text-on-surface placeholder:text-surface-variant focus:border-primary transition-all duration-200" placeholder="Senior Backend Engineer at Google" type="text"/>
+</div>
+</div>
+<!-- Experience Textarea -->
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Teaching Experience & Proposed Course Topic</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-sm text-on-surface placeholder:text-surface-variant focus:border-primary transition-all duration-200 resize-none" placeholder="Tell us about your background in distributed systems..." rows="5"></textarea>
+</div>
+<!-- File Upload Dropzone -->
+<div class="space-y-base">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase">Upload Resume or Portfolio (PDF)</label>
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-lg text-center cursor-pointer hover:border-primary/50 transition-all group" id="dropzone">
+<input class="hidden" id="fileInput" type="file"/>
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary mb-xs transition-colors">cloud_upload</span>
+<p class="text-on-surface-variant">Drag and drop your file here or <span class="text-primary font-semibold">browse</span></p>
+<p class="text-[12px] text-surface-variant mt-xs">Maximum size: 10MB</p>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-sm">
+<button class="w-full bg-primary hover:bg-primary/90 text-on-primary-fixed font-headline-md py-md rounded-lg flex items-center justify-center gap-2 group transition-all transform active:scale-[0.98]" type="submit">
+                            Submit Application
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">send</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Technical footer of the card -->
+<div class="bg-surface-container-high px-md py-sm border-t border-outline-variant flex justify-between items-center">
+<div class="flex gap-2">
+<div class="w-2 h-2 rounded-full bg-error/40"></div>
+<div class="w-2 h-2 rounded-full bg-tertiary/40"></div>
+<div class="w-2 h-2 rounded-full bg-primary/40"></div>
+</div>
+<span class="font-code-sm text-code-sm text-surface-variant">v1.4.2-stable // application_portal</span>
+</div>
+</div>
+</main>
+<!-- Post-Card Links -->
+<div class="w-full max-w-[800px] mx-auto px-margin-mobile pb-xl flex flex-col md:flex-row items-center justify-center gap-gutter text-on-surface-variant">
+<a class="font-body-md hover:text-primary transition-colors flex items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-[18px]">school</span>
+            Looking to learn? <span class="text-on-surface group-hover:text-primary">Join as a student</span>
+</a>
+<div class="hidden md:block w-px h-4 bg-outline-variant"></div>
+<a class="font-body-md hover:text-primary transition-colors flex items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-[18px]">login</span>
+            Already have an account? <span class="text-on-surface group-hover:text-primary">Log in</span>
+</a>
+</div>
+<!-- Footer Component (Execution of JSON command) -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter px-margin-desktop py-xl max-w-[1440px] mx-auto">
+<div class="space-y-sm">
+<div class="font-headline-md text-headline-md text-primary">CodeBlog Academy</div>
+<p class="text-on-surface-variant font-body-md">© 2024 CodeBlog Academy. Engineered for deep work.</p>
+</div>
+<div class="md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-md">
+<div class="space-y-xs">
+<h4 class="font-label-caps text-label-caps text-on-surface uppercase">Platform</h4>
+<ul class="space-y-base text-on-surface-variant font-body-md">
+<li><a class="hover:text-primary transition-colors" href="#">Courses</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Challenges</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Cloud IDE</a></li>
+</ul>
+</div>
+<div class="space-y-xs">
+<h4 class="font-label-caps text-label-caps text-on-surface uppercase">Company</h4>
+<ul class="space-y-base text-on-surface-variant font-body-md">
+<li><a class="hover:text-primary transition-colors" href="#">About</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Careers</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Open Source</a></li>
+</ul>
+</div>
+<div class="space-y-xs">
+<h4 class="font-label-caps text-label-caps text-on-surface uppercase">Newsletter</h4>
+<p class="text-[12px] text-surface-variant mb-xs">Get the latest backend articles weekly.</p>
+<div class="flex">
+<input class="bg-surface-container border border-outline-variant px-xs py-base text-code-sm rounded-l focus:border-primary w-full outline-none" placeholder="Email" type="email"/>
+<button class="bg-outline-variant px-xs py-base rounded-r hover:bg-primary hover:text-on-primary-fixed transition-all">
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for form
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dropzone-active');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dropzone-active');
+            });
+        });
+
+        // Background atmosphere effect: Subtle mouse-following glow
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth * 100;
+            const y = e.clientY / window.innerHeight * 100;
+            document.body.style.backgroundImage = `
+                radial-gradient(circle at ${x}% ${y}%, rgba(59, 130, 246, 0.03) 0%, transparent 40%),
+                linear-gradient(rgba(16, 19, 26, 0.95), rgba(16, 19, 26, 0.95)),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png')
+            `;
+        });
+    </script>
+</body></html>

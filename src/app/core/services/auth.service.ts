@@ -1,13 +1,11 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap, of, throwError } from 'rxjs';
+import { Injectable, signal, computed } from '@angular/core';
+import { Observable, tap, of, throwError, delay } from 'rxjs';
 import { User, AuthResponse } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly http = inject(HttpClient);
   private readonly tokenKey = 'lms_token';
 
   // Signals for application state
@@ -22,9 +20,6 @@ export class AuthService {
   private loadCurrentUser(): void {
     const token = this.getToken();
     if (token) {
-      // In a real application, we would call an API like /auth/me to verify the token.
-      // For now, we will load mock data representing the user stored in localStorage,
-      // or set a default student user for testing.
       const storedUser = localStorage.getItem('lms_user');
       if (storedUser) {
         try {
@@ -37,10 +32,7 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    // Standard Angular HttpClient call
-    // return this.http.post<AuthResponse>('/api/auth/login', { email, password }).pipe(...)
-    
-    // For standalone setup, we will provide a robust mock flow that acts like a real server:
+    // Simulated delay to feel like a real network request
     if (email === 'admin@codeblog.academy' && password === 'admin123') {
       const response: AuthResponse = {
         accessToken: 'mock_jwt_token_admin',
@@ -50,10 +42,14 @@ export class AuthService {
           name: 'Admin Instructor',
           role: 'admin',
           xp: 1500,
-          level: 15,
+          level: 3,
+          avatar: `https://api.dicebear.com/7.x/identicon/svg?seed=admin@codeblog.academy`,
         },
       };
-      return of(response).pipe(tap(res => this.handleAuthSuccess(res)));
+      return of(response).pipe(
+        delay(800),
+        tap((res) => this.handleAuthSuccess(res))
+      );
     } else if (email && password.length >= 6) {
       const response: AuthResponse = {
         accessToken: 'mock_jwt_token_student',
@@ -63,12 +59,16 @@ export class AuthService {
           name: email.split('@')[0],
           role: 'student',
           xp: 120,
-          level: 2,
+          level: 1,
+          avatar: `https://api.dicebear.com/7.x/identicon/svg?seed=${email}`,
         },
       };
-      return of(response).pipe(tap(res => this.handleAuthSuccess(res)));
+      return of(response).pipe(
+        delay(800),
+        tap((res) => this.handleAuthSuccess(res))
+      );
     } else {
-      return throwError(() => new Error('Invalid email or password (min 6 characters)'));
+      return throwError(() => new Error('Invalid email or password (min 6 characters)')).pipe(delay(500));
     }
   }
 
@@ -89,7 +89,7 @@ export class AuthService {
   }
 
   updateXP(xpGained: number): void {
-    this.currentUser.update(user => {
+    this.currentUser.update((user) => {
       if (!user) return null;
       const newXp = (user.xp || 0) + xpGained;
       const newLevel = Math.floor(newXp / 500) + 1;

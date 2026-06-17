@@ -1,0 +1,135 @@
+<main class="registration-layout">
+  <!-- Left Panel: Brand & Identity -->
+  <section class="brand-panel">
+    <div class="bg-overlay"></div>
+    <div class="brand-content">
+      <div class="logo-area">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="logo-icon">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
+          <path d="M6 6h10"/>
+          <path d="M6 10h10"/>
+          <path d="M13 14h3"/>
+        </svg>
+        <span class="logo-text">{ CS } SCHOOL</span>
+      </div>
+      <div class="brand-message">
+        <h1 class="brand-title">
+          Master <span class="highlight">Backend</span><br />Engineering
+        </h1>
+        <p class="brand-subtitle">
+          Dive deep into distributed systems, database optimization, and high-performance architecture with the world's leading engineers.
+        </p>
+      </div>
+      <div class="system-status">
+        <div class="status-dot"></div>
+        <span class="status-text">SYSTEM STATUS: READY_FOR_ONBOARDING</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Right Panel: Registration Form -->
+  <section class="form-panel">
+    <div class="mobile-logo">
+      <span class="logo-text">{ CS } SCHOOL</span>
+    </div>
+    
+    <div class="form-container">
+      <header class="form-header">
+        <h2 class="form-title">Create your account</h2>
+        <p class="form-subtitle">Join thousands of engineers upgrading their skills.</p>
+      </header>
+
+      <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="registration-form">
+        <!-- Full Name -->
+        <div class="input-group">
+          <label for="name" class="input-label">&gt; FULL_NAME</label>
+          <input 
+            id="name" 
+            type="text" 
+            formControlName="name" 
+            placeholder="e.g. Linus Torvalds" 
+            class="code-input"
+            [class.has-error]="registrationForm.get('name')?.invalid && registrationForm.get('name')?.touched"
+          />
+        </div>
+
+        <!-- Email Address -->
+        <div class="input-group">
+          <label for="email" class="input-label">&gt; EMAIL_ADDRESS</label>
+          <input 
+            id="email" 
+            type="email" 
+            formControlName="email" 
+            placeholder="engineer@academy.io" 
+            class="code-input"
+            [class.has-error]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="input-group">
+          <div class="label-row">
+            <label for="password" class="input-label">&gt; PASSWORD_KEY</label>
+            <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+              <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+          <input 
+            id="password" 
+            [type]="showPassword ? 'text' : 'password'" 
+            formControlName="password" 
+            placeholder="********" 
+            class="code-input"
+            [class.has-error]="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched"
+          />
+        </div>
+
+        <!-- Terms -->
+        <div class="terms-group">
+          <input 
+            id="terms" 
+            type="checkbox" 
+            formControlName="terms" 
+            class="checkbox-input"
+          />
+          <label for="terms" class="terms-label">
+            I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a>.
+          </label>
+        </div>
+
+        <!-- Submit CTA -->
+        <div class="submit-action">
+          <button type="submit" [disabled]="registrationForm.invalid || isSubmitting" class="submit-btn" [class.submitting]="isSubmitting">
+            <span class="material-symbols-outlined" [class.animate-spin]="isSubmitting">
+              {{ isSubmitting ? 'refresh' : 'person_add' }}
+            </span>
+            {{ isSubmitting ? 'INITIALIZING_ACCOUNT...' : 'Create Student Account' }}
+          </button>
+        </div>
+      </form>
+
+      <footer class="form-footer">
+        <div class="footer-row">
+          <span class="footer-text">Already have an account?</span>
+          <a routerLink="/login" class="link footer-link flex-link">
+            Log in <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        </div>
+        <div class="footer-row mt-4">
+          <span class="footer-text">Want to teach?</span>
+          <a routerLink="/register-teacher" class="link secondary-link">Apply as an Instructor</a>
+        </div>
+      </footer>
+
+      <div class="decoration-bar">
+        <div class="line"></div>
+        <div class="dots">
+          <div class="dot primary"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <div class="line"></div>
+      </div>
+    </div>
+  </section>
+</main>

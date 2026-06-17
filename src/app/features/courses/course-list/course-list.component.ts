@@ -59,7 +59,7 @@ export class CourseListComponent {
     this.selectedDifficulty.set(difficulty);
   }
 
-  enrollInCourse(courseId: string): void {
+  enrollInCourse(courseId: string | number): void {
     if (!this.authService.isAuthenticated()) {
       // Prompt user or handle redirect
       return;

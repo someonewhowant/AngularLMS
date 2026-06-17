@@ -8,6 +8,16 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'register',
+    loadComponent: () =>
+      import('./features/auth/student-registration/student-registration').then((m) => m.StudentRegistration),
+  },
+  {
+    path: 'register-teacher',
+    loadComponent: () =>
+      import('./features/auth/teacher-registration/teacher-registration').then((m) => m.TeacherRegistration),
+  },
+  {
     path: 'dashboard',
     loadComponent: () =>
       import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
@@ -18,6 +28,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/courses/course-list/course-list.component').then(
         (m) => m.CourseListComponent
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'courses/:id',
+    loadComponent: () =>
+      import('./features/courses/course-details/course-details.component').then(
+        (m) => m.CourseDetailsComponent
       ),
     canActivate: [authGuard],
   },

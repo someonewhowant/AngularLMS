@@ -40,7 +40,7 @@ export class DashboardComponent {
     return Math.min(100, Math.round((currentLvlProgress / currentLvlTotal) * 100));
   });
 
-  incrementProgress(courseId: string, currentProgress: number): void {
+  incrementProgress(courseId: string | number, currentProgress: number): void {
     const nextProgress = Math.min(100, currentProgress + 25);
     this.courseService.updateProgress(courseId, nextProgress).subscribe();
   }

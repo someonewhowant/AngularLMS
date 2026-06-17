@@ -1,0 +1,151 @@
+<div class="details-layout">
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M13 14h3"/></svg>
+        <span>CodeBlog Academy</span>
+      </div>
+      <nav class="nav-links">
+        <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+        <a routerLink="/courses" class="nav-link active">Courses</a>
+      </nav>
+      <div class="user-menu">
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/dashboard" class="nav-link-profile">My Dashboard</a>
+        } @else {
+          <a routerLink="/login" class="nav-link-login">Sign In</a>
+        }
+      </div>
+    </div>
+  </header>
+
+  <main class="details-content">
+    @if (isLoading()) {
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading course information...</p>
+      </div>
+    } @else {
+      @if (course(); as c) {
+        <div class="course-grid">
+          <!-- Main Content Info -->
+          <div class="main-info">
+            <nav class="breadcrumb">
+              <a routerLink="/courses">Courses</a>
+              <span class="sep">/</span>
+              <span class="active">{{ c.category }}</span>
+            </nav>
+
+            <header class="hero-header">
+              <span class="difficulty-tag {{ c.difficulty.toLowerCase() }}">{{ c.difficulty }}</span>
+              <h1>{{ c.title }}</h1>
+              <p class="description">{{ c.description }}</p>
+
+              <div class="metadata-row">
+                <div class="meta-item">
+                  <span class="label">Instructor</span>
+                  <span class="val">{{ c.instructorName }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">Duration</span>
+                  <span class="val">{{ c.duration }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">XP Reward</span>
+                  <span class="val highlight">+{{ c.xpReward }} XP</span>
+                </div>
+              </div>
+            </header>
+
+            <!-- Syllabus Section -->
+            <section class="syllabus-section">
+              <h3>Course Syllabus</h3>
+              <p class="section-desc">Follow a structured learning path with step-by-step guidance.</p>
+
+              <div class="syllabus-list">
+                @for (module of syllabus; track module.title; let idx = $index) {
+                  <div class="module-item">
+                    <div class="module-header">
+                      <div class="module-title-box">
+                        <span class="idx">0{{ idx + 1 }}</span>
+                        <h4>{{ module.title }}</h4>
+                      </div>
+                      <span class="duration">{{ module.duration }}</span>
+                    </div>
+                    <ul class="lesson-list">
+                      @for (lesson of module.lessons; track lesson) {
+                        <li>
+                          <span class="bullet">🚀</span>
+                          <span class="text">{{ lesson }}</span>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            </section>
+          </div>
+
+          <!-- Action Sidebar Card -->
+          <aside class="sidebar">
+            <div class="action-card">
+              <div class="card-thumb">
+                <img [src]="c.thumbnail" [alt]="c.title" />
+                <div class="overlay-play">
+                  <span class="play-icon">▶</span>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div class="price-box">
+                  <span class="price-label">Access Type</span>
+                  <span class="price-val">Free Enrollment</span>
+                </div>
+
+                @if (enrollError()) {
+                  <div class="error-msg">{{ enrollError() }}</div>
+                }
+
+                <div class="actions">
+                  @if (c.enrolled) {
+                    <app-button
+                      routerLink="/dashboard"
+                      variant="primary"
+                      size="lg">
+                      Go to Dashboard
+                    </app-button>
+                  } @else {
+                    <app-button
+                      variant="primary"
+                      size="lg"
+                      [loading]="isEnrolling()"
+                      (btnClick)="enroll()">
+                      Enroll in Course
+                    </app-button>
+                  }
+                </div>
+
+                <div class="features-list">
+                  <h5>This course includes:</h5>
+                  <ul>
+                    <li>🕒 Self-paced online lectures</li>
+                    <li>🔥 Interactive sandbox labs</li>
+                    <li>🏆 Certificate of completion</li>
+                    <li>⚡ Lifetime dashboard access</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      } @else {
+        <div class="not-found">
+          <h3>Course Not Found</h3>
+          <p>We couldn't retrieve the details for this course. It might have been unpublished or removed.</p>
+          <app-button routerLink="/courses" variant="outline">Back to Catalog</app-button>
+        </div>
+      }
+    }
+  </main>
+</div>

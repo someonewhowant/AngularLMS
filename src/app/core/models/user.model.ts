@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  id: string | number;
   email: string;
   name: string;
   role: 'student' | 'instructor' | 'admin';
@@ -9,7 +9,7 @@ export interface User {
 }
 
 export interface Course {
-  id: string;
+  id: string | number;
   title: string;
   description: string;
   instructorName: string;

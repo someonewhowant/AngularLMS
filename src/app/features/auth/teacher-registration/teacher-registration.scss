@@ -1,0 +1,381 @@
+// Variables for Syntactic Dark Theme
+$background: #10131a;
+$surface-container-lowest: #0b0e15;
+$surface-container-low: #191b23;
+$surface-container-high: #272a31;
+$on-surface: #e1e2ec;
+$on-surface-variant: #c2c6d6;
+$outline-variant: #424754;
+$primary: #3b82f6;
+$primary-hover: rgba(59, 130, 246, 0.9);
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.technical-bg {
+  background-color: $background;
+  color: $on-surface;
+  background-image: 
+    linear-gradient(rgba(16, 19, 26, 0.95), rgba(16, 19, 26, 0.95)),
+    url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+  background-size: auto, 100px 100px;
+}
+
+.header {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  position: relative;
+  z-index: 10;
+  
+  @media (min-width: 768px) {
+    padding: 0 64px;
+  }
+  
+  .header-content {
+    width: 100%;
+    max-width: 1440px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    .logo-icon {
+      height: 40px;
+      width: 40px;
+    }
+    
+    .brand-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      color: $primary;
+      letter-spacing: -0.05em;
+      font-weight: 700;
+    }
+  }
+  
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $on-surface-variant;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s;
+    
+    &:hover {
+      color: $primary;
+    }
+    
+    .icon {
+      font-size: 18px;
+    }
+  }
+}
+
+.main-content {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 16px;
+  overflow: hidden;
+}
+
+.application-card {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  background-color: $surface-container-low;
+  border: 1px solid $outline-variant;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  
+  .card-glow-border {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(to right, rgba($primary, 0.5), $primary, rgba($primary, 0.5));
+  }
+  
+  .card-body {
+    padding: 24px;
+    
+    @media (min-width: 768px) {
+      padding: 80px;
+    }
+  }
+  
+  .card-header {
+    margin-bottom: 48px;
+    
+    .title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 600;
+      color: $on-surface;
+      margin-bottom: 8px;
+    }
+    
+    .subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      color: $on-surface-variant;
+    }
+  }
+  
+  .application-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .grid-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    .input-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: $on-surface-variant;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    
+    .form-input {
+      width: 100%;
+      background-color: $surface-container-lowest;
+      border: 1px solid $outline-variant;
+      border-radius: 8px;
+      padding: 16px;
+      color: $on-surface;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      
+      &::placeholder {
+        color: #8c909f;
+      }
+      
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        border-left-width: 4px;
+        padding-left: calc(16px - 3px);
+      }
+      
+      &.has-error {
+        border-color: #ffb4ab;
+      }
+      
+      &.resize-none {
+        resize: none;
+      }
+    }
+    
+    .dropzone {
+      border: 2px dashed $outline-variant;
+      border-radius: 8px;
+      padding: 48px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:hover {
+        border-color: rgba($primary, 0.5);
+        
+        .dropzone-icon {
+          color: $primary;
+        }
+      }
+      
+      .hidden-input {
+        display: none;
+      }
+      
+      .dropzone-icon {
+        font-size: 36px;
+        color: $on-surface-variant;
+        margin-bottom: 8px;
+        transition: color 0.2s;
+      }
+      
+      .dropzone-text {
+        color: $on-surface-variant;
+        font-family: 'Inter', sans-serif;
+        
+        .highlight {
+          color: $primary;
+          font-weight: 600;
+        }
+        
+        &.file-selected {
+          color: $primary;
+          font-weight: 600;
+        }
+      }
+      
+      .dropzone-subtext {
+        font-size: 12px;
+        color: #8c909f;
+        margin-top: 8px;
+      }
+    }
+  }
+  
+  .submit-action {
+    padding-top: 16px;
+    
+    .submit-btn {
+      width: 100%;
+      background-color: $primary;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      padding: 24px;
+      border-radius: 8px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      
+      &:hover:not(:disabled) {
+        background-color: $primary-hover;
+        
+        .material-symbols-outlined {
+          transform: translateX(4px);
+        }
+      }
+      
+      &:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      
+      .material-symbols-outlined {
+        transition: transform 0.2s;
+      }
+      
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+    }
+  }
+  
+  .card-footer {
+    background-color: $surface-container-high;
+    padding: 16px 24px;
+    border-top: 1px solid $outline-variant;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .status-dots {
+      display: flex;
+      gap: 8px;
+      
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        
+        &.error { background-color: rgba(#ffb4ab, 0.4); }
+        &.warning { background-color: rgba(#ffb786, 0.4); }
+        &.success { background-color: rgba($primary, 0.4); }
+      }
+    }
+    
+    .footer-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #8c909f;
+    }
+  }
+}
+
+.post-card-links {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+  
+  .link-item {
+    font-family: 'Inter', sans-serif;
+    color: $on-surface-variant;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+    
+    &:hover {
+      color: $primary;
+      
+      .highlight {
+        color: $primary;
+      }
+    }
+    
+    .icon {
+      font-size: 18px;
+    }
+    
+    .highlight {
+      color: $on-surface;
+      transition: color 0.2s;
+    }
+  }
+  
+  .divider {
+    display: none;
+    
+    @media (min-width: 768px) {
+      display: block;
+      width: 1px;
+      height: 16px;
+      background-color: $outline-variant;
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

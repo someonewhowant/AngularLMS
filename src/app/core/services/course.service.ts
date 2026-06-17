@@ -1,6 +1,5 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of, delay } from 'rxjs';
 import { Course } from '../models/user.model';
 import { AuthService } from './auth.service';
 
@@ -8,7 +7,6 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class CourseService {
-  private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
 
   private readonly initialCourses: Course[] = [
@@ -75,7 +73,7 @@ export class CourseService {
   ];
 
   // Course state signal
-  readonly courses = signal<Course[]>(this.initialCourses);
+  readonly courses = signal<Course[]>([]);
 
   // Derived signals
   readonly enrolledCourses = computed(() =>
@@ -97,42 +95,45 @@ export class CourseService {
     this.loadState();
   }
 
-  private loadState(): void {
+  loadState(): void {
     const stored = localStorage.getItem('lms_courses');
     if (stored) {
       try {
         this.courses.set(JSON.parse(stored));
       } catch {
-        // Fallback to default list if parsing fails
+        this.courses.set(this.initialCourses);
         this.saveState();
       }
     } else {
+      this.courses.set(this.initialCourses);
       this.saveState();
     }
+  }
+
+  getCourseById(id: string | number): Observable<Course | null> {
+    const match = this.courses().find(c => c.id === id);
+    return of(match || null);
   }
 
   private saveState(): void {
     localStorage.setItem('lms_courses', JSON.stringify(this.courses()));
   }
 
-  enroll(courseId: string): Observable<boolean> {
+  enroll(courseId: string | number): Observable<boolean> {
     this.courses.update((list) =>
       list.map((c) => (c.id === courseId ? { ...c, enrolled: true, progress: 0 } : c))
     );
     this.saveState();
-    
-    // Reward registration XP
     this.authService.updateXP(50);
-    return of(true);
+    return of(true).pipe(delay(300));
   }
 
-  updateProgress(courseId: string, progress: number): Observable<boolean> {
+  updateProgress(courseId: string | number, progress: number): Observable<boolean> {
     let xpRewardGained = 0;
     this.courses.update((list) =>
       list.map((c) => {
         if (c.id === courseId) {
           const oldProgress = c.progress || 0;
-          // If the course is completed, reward full course XP
           if (progress === 100 && oldProgress < 100) {
             xpRewardGained = c.xpReward;
           }

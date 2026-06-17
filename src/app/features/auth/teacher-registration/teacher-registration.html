@@ -1,0 +1,105 @@
+<div class="technical-bg min-h-screen">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="brand">
+        <img alt="CodeBlog Academy Logo" class="logo-icon" src="https://lh3.googleusercontent.com/aida/AP1WRLto0WOZaYlJ_aRCunvzXGKXR4uaXisCXPMr2F2pnlZQ-VYkUCi3KUk3dQs6l1tvQQX3jaSz8bfNtyHSfEyPNWZcs4fQlhWgWPo46po0OhQ9RF3JBzd1rfHwgQZ49w-Ny9CoyHWypSgIgprwq9q430I2ytyZolo1ub8wSX6K9HWjefIippcJiZat1pkrrXeqs5B--LrvclMnj26XtYdPEK8wjh7ov_x0KDrFIBNNJ_55FaMfE76Kih32PV0y" />
+        <span class="brand-text">CodeBlog Academy</span>
+      </div>
+      <a routerLink="/" class="back-link">
+        <span class="material-symbols-outlined icon">arrow_back</span>
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Application Card -->
+    <div class="application-card">
+      <div class="card-glow-border"></div>
+      
+      <div class="card-body">
+        <div class="card-header">
+          <h1 class="title">Become an Instructor</h1>
+          <p class="subtitle">Share your engineering expertise with thousands of students.</p>
+        </div>
+
+        <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="application-form">
+          <!-- Grid Layout for Personal Info -->
+          <div class="grid-form">
+            <div class="input-group">
+              <label class="input-label">Full Name</label>
+              <input type="text" formControlName="fullName" placeholder="e.g. Linus Torvalds" class="form-input" [class.has-error]="applicationForm.get('fullName')?.invalid && applicationForm.get('fullName')?.touched" />
+            </div>
+            <div class="input-group">
+              <label class="input-label">Email Address</label>
+              <input type="email" formControlName="email" placeholder="dev@company.io" class="form-input" [class.has-error]="applicationForm.get('email')?.invalid && applicationForm.get('email')?.touched" />
+            </div>
+            <div class="input-group">
+              <label class="input-label">LinkedIn Profile URL</label>
+              <input type="url" formControlName="linkedIn" placeholder="linkedin.com/in/username" class="form-input" [class.has-error]="applicationForm.get('linkedIn')?.invalid && applicationForm.get('linkedIn')?.touched" />
+            </div>
+            <div class="input-group">
+              <label class="input-label">Current Job Title / Company</label>
+              <input type="text" formControlName="jobTitle" placeholder="Senior Backend Engineer at Google" class="form-input" [class.has-error]="applicationForm.get('jobTitle')?.invalid && applicationForm.get('jobTitle')?.touched" />
+            </div>
+          </div>
+
+          <!-- Experience Textarea -->
+          <div class="input-group">
+            <label class="input-label">Teaching Experience & Proposed Course Topic</label>
+            <textarea formControlName="experience" placeholder="Tell us about your background in distributed systems..." rows="5" class="form-input resize-none" [class.has-error]="applicationForm.get('experience')?.invalid && applicationForm.get('experience')?.touched"></textarea>
+          </div>
+
+          <!-- File Upload Dropzone -->
+          <div class="input-group">
+            <label class="input-label">Upload Resume or Portfolio (PDF)</label>
+            <div class="dropzone" (click)="triggerFileInput()">
+              <input type="file" id="fileInput" class="hidden-input" (change)="onFileSelected($event)" accept=".pdf" />
+              <span class="material-symbols-outlined dropzone-icon">cloud_upload</span>
+              @if (selectedFileName) {
+                <p class="dropzone-text file-selected">{{ selectedFileName }}</p>
+              } @else {
+                <p class="dropzone-text">Drag and drop your file here or <span class="highlight">browse</span></p>
+                <p class="dropzone-subtext">Maximum size: 10MB</p>
+              }
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="submit-action">
+            <button type="submit" [disabled]="applicationForm.invalid || isSubmitting" class="submit-btn" [class.submitting]="isSubmitting">
+              {{ isSubmitting ? 'Submitting...' : 'Submit Application' }}
+              <span class="material-symbols-outlined" [class.animate-spin]="isSubmitting">
+                {{ isSubmitting ? 'refresh' : 'send' }}
+              </span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Technical footer of the card -->
+      <div class="card-footer">
+        <div class="status-dots">
+          <div class="dot error"></div>
+          <div class="dot warning"></div>
+          <div class="dot success"></div>
+        </div>
+        <span class="footer-meta">v1.4.2-stable // application_portal</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Post-Card Links -->
+  <div class="post-card-links">
+    <a routerLink="/register" class="link-item">
+      <span class="material-symbols-outlined icon">school</span>
+      Looking to learn? <span class="highlight">Join as a student</span>
+    </a>
+    <div class="divider"></div>
+    <a routerLink="/login" class="link-item">
+      <span class="material-symbols-outlined icon">login</span>
+      Already have an account? <span class="highlight">Log in</span>
+    </a>
+  </div>
+</div>

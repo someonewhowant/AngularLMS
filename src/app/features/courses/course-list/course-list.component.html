@@ -87,7 +87,7 @@
           @for (course of filteredCourses(); track course.id) {
             <div class="course-card">
               <!-- Thumbnail -->
-              <div class="thumbnail-wrapper">
+              <div class="thumbnail-wrapper" [routerLink]="['/courses', course.id]" style="cursor: pointer;">
                 <img [src]="course.thumbnail" [alt]="course.title" class="course-thumb" />
                 <span class="category-badge">{{ course.category }}</span>
               </div>
@@ -98,7 +98,7 @@
                   <span class="difficulty {{ course.difficulty.toLowerCase() }}">{{ course.difficulty }}</span>
                   <span class="xp-badge">+{{ course.xpReward }} XP</span>
                 </div>
-                <h3>{{ course.title }}</h3>
+                <h3 [routerLink]="['/courses', course.id]" style="cursor: pointer;">{{ course.title }}</h3>
                 <p class="desc">{{ course.description }}</p>
                 <div class="details">
                   <span>🕒 {{ course.duration }}</span>
@@ -107,17 +107,25 @@
                 </div>
 
                 <!-- Action button -->
-                <div class="card-footer">
+                <div class="card-footer" style="display: flex; gap: 0.5rem; width: 100%;">
+                  <app-button
+                    [routerLink]="['/courses', course.id]"
+                    variant="outline"
+                    size="md"
+                    style="flex: 1;">
+                    Details
+                  </app-button>
                   @if (course.enrolled) {
-                    <a routerLink="/dashboard" class="enrolled-link">
-                      Enrolled — View Dashboard
+                    <a routerLink="/dashboard" class="enrolled-link" style="flex: 1; text-align: center; white-space: nowrap; line-height: 2.2;">
+                      Enrolled
                     </a>
                   } @else {
                     <app-button
                       variant="primary"
                       size="md"
-                      (btnClick)="enrollInCourse(course.id)">
-                      Enroll in Course
+                      (btnClick)="enrollInCourse(course.id)"
+                      style="flex: 1;">
+                      Enroll
                     </app-button>
                   }
                 </div>
