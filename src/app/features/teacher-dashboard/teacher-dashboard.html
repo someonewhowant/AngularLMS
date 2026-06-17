@@ -1,0 +1,202 @@
+<div class="dashboard-layout">
+  <!-- TopNavBar -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <span class="brand">CodeBlog Academy</span>
+      <nav class="desktop-nav">
+        <a href="#">Docs</a>
+        <a href="#">Support</a>
+        <a href="#">Community</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <div class="search-box hidden-mobile">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input type="text" placeholder="Quick search (⌘K)" class="search-input" />
+      </div>
+      <div class="actions">
+        <button class="material-symbols-outlined action-btn">notifications</button>
+        <button class="material-symbols-outlined action-btn">settings</button>
+        <div class="avatar">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOYdMUiBQuE0LLK2nc7zUKy6M3AgvK4NK-33wjRBFkifbGEgmKSeorJxnfDbmLppTTKyP0NWhBTfdKfZp4b9YlOmG3Hns7qCjOYKlM80y7qwe6CAQfcBtOHgdbB4ficcSkywp3gQfhhOzxzxQousOFOrXzjjiPvqndqFBDAiBYsmZkvVFiJw2a7KakusMSSondD8Wi7PLND75V1-hKzwj-ioC06_ZgGjGVJ838GsqGZc2ACu3QUEVs8nGtzxZ5CSoKkRF34NFPKOpY" alt="Dr. Elena Vance" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- SideNavBar -->
+    <aside class="sidebar hidden-mobile">
+      <div class="user-profile">
+        <div class="profile-card">
+          <div class="profile-avatar">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQcniYPCgx_J9IUBtPVACtQT7_mAoUFyoMjWRR7NzifNwmS3SzPB9gCVFPZps7T_Be2CS1DVvReTsIp3irgTdKypSvOmw78rbxS3kSVvZGs4iQutd7ednrELR4TO1YIK3mxatoSHqVU02UuvEAqGMURrOb0_fMtKFZoxWmlRwtqKVO6iAVUJMNp9_2f7Vk1DLwAgNAuKhsFWb7ligZrBktMvvZfUbt3iIbMwmgnm5c6Z0j4c08-n80heuJb02CZsB2t2hHeMkjm1nw" alt="Avatar" />
+          </div>
+          <div class="profile-info">
+            <p class="profile-name">{{ instructorName }}</p>
+            <p class="profile-role">Senior Instructor</p>
+          </div>
+        </div>
+      </div>
+      <nav class="side-nav">
+        <a href="#" class="nav-item active">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">menu_book</span>
+          Course Manager
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">group</span>
+          Students
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">analytics</span>
+          Analytics
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined">settings</span>
+          Settings
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="#" class="nav-item logout">
+          <span class="material-symbols-outlined">logout</span>
+          Log Out
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="workspace canvas-grid">
+      <div class="workspace-content">
+        <!-- Header -->
+        <div class="workspace-header">
+          <h1 class="page-title">Instructor Console</h1>
+          <p class="page-subtitle">Welcome back, {{ instructorName }}. Your students have been busy while you were away.</p>
+        </div>
+
+        <!-- Analytics Row -->
+        <div class="stats-grid">
+          <div class="stat-card glass-card interactive-border">
+            <div class="stat-header">
+              <span class="stat-label">Total Students</span>
+              <span class="material-symbols-outlined text-primary">group</span>
+            </div>
+            <div class="stat-value code-font">{{ totalStudents }}</div>
+          </div>
+          <div class="stat-card glass-card interactive-border">
+            <div class="stat-header">
+              <span class="stat-label">Avg. Rating</span>
+              <span class="material-symbols-outlined text-tertiary">star</span>
+            </div>
+            <div class="stat-value code-font">{{ avgRating }}</div>
+          </div>
+          <div class="stat-card glass-card interactive-border">
+            <div class="stat-header">
+              <span class="stat-label">Total Income</span>
+              <span class="material-symbols-outlined text-secondary">payments</span>
+            </div>
+            <div class="stat-value code-font">{{ totalIncome }}</div>
+          </div>
+          <div class="stat-card glass-card interactive-border">
+            <div class="stat-header">
+              <span class="stat-label">Active Q's</span>
+              <span class="material-symbols-outlined text-error">help_center</span>
+            </div>
+            <div class="stat-value code-font">{{ activeQuestions }}</div>
+          </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+          <!-- Course Management Table -->
+          <div class="courses-section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span class="material-symbols-outlined text-primary">terminal</span>
+                Course Manifest
+              </h2>
+              <button class="btn-primary">
+                <span class="material-symbols-outlined icon-sm">add</span> NEW COURSE
+              </button>
+            </div>
+            <div class="table-container glass-card">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Course Name</th>
+                    <th>Students</th>
+                    <th class="text-center">Rating</th>
+                    <th>Status</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (course of courses; track course.name) {
+                    <tr class="table-row">
+                      <td class="font-semibold">{{ course.name }}</td>
+                      <td class="code-sm text-muted">{{ course.students }}</td>
+                      <td class="code-sm text-muted text-center">{{ course.rating }}</td>
+                      <td>
+                        <span class="badge" [class.badge-published]="course.status === 'PUBLISHED'" [class.badge-draft]="course.status === 'DRAFT'">
+                          {{ course.status }}
+                        </span>
+                      </td>
+                      <td class="text-right actions-cell">
+                        <button class="material-symbols-outlined icon-btn">edit</button>
+                        <button class="material-symbols-outlined icon-btn">monitoring</button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Priority Feed -->
+          <div class="feed-section">
+            <h2 class="section-title">
+              <span class="material-symbols-outlined text-error">notification_important</span>
+              Priority Feed
+            </h2>
+            <div class="feed-list">
+              @for (alert of alerts; track alert.content) {
+                <div class="feed-item glass-card interactive-border">
+                  <div class="feed-indicator" [class]="'bg-' + alert.typeClass"></div>
+                  <div class="feed-header">
+                    <span class="feed-type" [class]="'text-' + alert.typeClass">{{ alert.type }}</span>
+                    <span class="feed-time">{{ alert.time }}</span>
+                  </div>
+                  <p class="feed-content" [innerHTML]="alert.content"></p>
+                  @if (alert.actions) {
+                    <div class="feed-actions">
+                      @for (action of alert.actions; track action.label) {
+                        <button class="feed-action-btn" [class.primary]="action.label === 'REPLY'">{{ action.label }}</button>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              <button class="view-all-btn">VIEW ALL LOGS</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-left">
+      <span class="footer-brand">CodeBlog Academy</span>
+      <p class="footer-copy">© 2024 CodeBlog Academy. Precision Education for Backend Engineers.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">API Status</a>
+    </div>
+  </footer>
+</div>

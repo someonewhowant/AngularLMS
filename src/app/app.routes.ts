@@ -24,6 +24,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: 'teacher-dashboard',
+    loadComponent: () =>
+      import('./features/teacher-dashboard/teacher-dashboard').then((m) => m.TeacherDashboard),
+    canActivate: [authGuard],
+  },
+  {
     path: 'courses',
     loadComponent: () =>
       import('./features/courses/course-list/course-list.component').then(
