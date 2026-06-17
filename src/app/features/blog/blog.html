@@ -1,0 +1,117 @@
+<div class="blog-layout">
+  <!-- TopNavBar -->
+  <header class="top-nav">
+    <div class="nav-content">
+      <div class="nav-left">
+        <a class="brand" href="#">CodeBlog Academy</a>
+        <nav class="desktop-nav">
+          <a href="#">Learn</a>
+          <a href="#" class="active">Articles</a>
+          <a href="#">Roadmaps</a>
+          <a href="#">Community</a>
+        </nav>
+      </div>
+      <div class="nav-right">
+        <button class="material-symbols-outlined action-btn">search</button>
+        <button class="btn-primary">Sign In</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Page Header -->
+    <section class="page-header">
+      <h1 class="page-title syntax-glow">Engineering Blog</h1>
+      <p class="page-subtitle">In-depth articles, tutorials, and system design case studies curated for the backend architect.</p>
+    </section>
+
+    <!-- Categories -->
+    <nav class="categories-nav">
+      @for (category of categories; track category) {
+        <button 
+          class="category-btn" 
+          [class.active]="activeCategory === category"
+          (click)="setCategory(category)">
+          {{ category }}
+        </button>
+      }
+    </nav>
+
+    <!-- Featured Article -->
+    <article class="featured-article">
+      <div class="featured-image">
+        <img [src]="featuredArticle.imageUrl" alt="Featured Article" />
+      </div>
+      <div class="featured-content">
+        <div class="featured-badge">Featured Case Study</div>
+        <h2 class="featured-title">{{ featuredArticle.title }}</h2>
+        <p class="featured-excerpt">{{ featuredArticle.excerpt }}</p>
+        
+        <div class="author-info">
+          <div class="author-avatar">
+            <span class="material-symbols-outlined text-primary">person</span>
+          </div>
+          <div>
+            <p class="author-name">{{ featuredArticle.author }}</p>
+            <p class="author-role">{{ featuredArticle.authorRole }}</p>
+          </div>
+        </div>
+        
+        <button class="read-article-btn">
+          Read Article
+          <span class="material-symbols-outlined icon">arrow_forward</span>
+        </button>
+      </div>
+    </article>
+
+    <!-- Article Grid -->
+    <div class="article-grid">
+      @for (post of posts; track post.id) {
+        <app-blog-card [post]="post"></app-blog-card>
+      }
+    </div>
+
+    <!-- Load More -->
+    <div class="load-more-container">
+      <button class="load-more-btn">
+        Load More Articles
+        <span class="material-symbols-outlined icon">expand_more</span>
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="blog-footer">
+    <div class="footer-content">
+      <div class="footer-column brand-column">
+        <h4 class="footer-brand">CodeBlog Academy</h4>
+        <p class="footer-desc">Master the craft of backend engineering with high-fidelity technical content.</p>
+        <div class="social-icons">
+          <a href="#" class="material-symbols-outlined">terminal</a>
+          <a href="#" class="material-symbols-outlined">cloud_done</a>
+          <a href="#" class="material-symbols-outlined">code_blocks</a>
+        </div>
+      </div>
+      
+      <div class="footer-column">
+        <h5 class="column-title">Platform</h5>
+        <ul class="footer-links">
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Roadmaps</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h5 class="column-title">Company</h5>
+        <ul class="footer-links mb-lg">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Engineering Blog</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+        <p class="copyright">© 2024 CodeBlog Academy. Engineered for deep work.</p>
+      </div>
+    </div>
+  </footer>
+</div>

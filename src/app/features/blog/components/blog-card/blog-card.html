@@ -1,0 +1,11 @@
+<a [routerLink]="['/blog', post.id]" class="blog-card group">
+  <div class="card-header">
+    <span class="category-badge">{{ post.category }}</span>
+    <span class="date">{{ post.date }}</span>
+  </div>
+  <h3 class="title">{{ post.title }}</h3>
+  <p class="excerpt">{{ post.excerpt }}</p>
+  <div class="read-more">
+    Read More <span class="material-symbols-outlined icon">chevron_right</span>
+  </div>
+</a>

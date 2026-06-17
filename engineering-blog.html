@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Engineering Blog | CodeBlog Academy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#8c909f",
+                    "surface-variant": "#32353c",
+                    "background": "#10131a",
+                    "tertiary": "#ffb786",
+                    "on-primary-fixed-variant": "#004395",
+                    "on-secondary": "#263143",
+                    "surface-container": "#1d2027",
+                    "on-error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#bcc7de",
+                    "inverse-surface": "#e1e2ec",
+                    "secondary": "#bcc7de",
+                    "primary": "#adc6ff",
+                    "on-surface-variant": "#c2c6d6",
+                    "tertiary-fixed": "#ffdcc6",
+                    "on-background": "#e1e2ec",
+                    "surface-container-highest": "#32353c",
+                    "primary-fixed-dim": "#adc6ff",
+                    "outline-variant": "#424754",
+                    "surface-tint": "#adc6ff",
+                    "surface-dim": "#10131a",
+                    "on-tertiary-fixed": "#311400",
+                    "tertiary-container": "#df7412",
+                    "on-primary-container": "#00285d",
+                    "surface-bright": "#363941",
+                    "secondary-container": "#3e495d",
+                    "on-tertiary-fixed-variant": "#723600",
+                    "on-tertiary-container": "#461f00",
+                    "surface-container-low": "#191b23",
+                    "primary-container": "#4d8eff",
+                    "on-secondary-fixed-variant": "#3c475a",
+                    "on-primary-fixed": "#001a42",
+                    "inverse-primary": "#005ac2",
+                    "on-tertiary": "#502400",
+                    "on-surface": "#e1e2ec",
+                    "surface-container-high": "#272a31",
+                    "primary-fixed": "#d8e2ff",
+                    "on-secondary-fixed": "#111c2d",
+                    "on-primary": "#002e6a",
+                    "on-secondary-container": "#aeb9d0",
+                    "on-error": "#690005",
+                    "surface": "#10131a",
+                    "error": "#ffb4ab",
+                    "surface-container-lowest": "#0b0e15",
+                    "error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb786",
+                    "secondary-fixed": "#d8e3fb",
+                    "inverse-on-surface": "#2e3038"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xs": "8px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "64px",
+                    "gutter": "24px",
+                    "base": "4px",
+                    "lg": "48px",
+                    "sm": "16px",
+                    "md": "24px",
+                    "xl": "80px"
+            },
+            "fontFamily": {
+                    "code-sm": ["JetBrains Mono"],
+                    "display-lg": ["JetBrains Mono"],
+                    "label-caps": ["JetBrains Mono"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["JetBrains Mono"],
+                    "display-lg-mobile": ["JetBrains Mono"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "code-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0A0A0A; /* Tonal Elevation Level 0 */
+            color: #e1e2ec;
+        }
+        .card-elevation-1 {
+            background-color: #111827; /* Level 1 */
+            border: 1px solid #1E293B;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-elevation-1:hover {
+            border-color: #3B82F6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
+        }
+        .syntax-glow {
+            text-shadow: 0 0 8px rgba(173, 198, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased">
+<!-- TopNavBar -->
+<header class="bg-background dark:bg-background border-b border-outline-variant docked full-width top-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop h-20 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-xl">
+<a class="font-display-lg text-display-lg text-primary tracking-tighter" href="#">CodeBlog Academy</a>
+<nav class="hidden md:flex gap-md font-code-sm text-code-sm items-center">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors" href="#">Learn</a>
+<a class="text-primary border-b-2 border-primary pb-1" href="#">Articles</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors" href="#">Roadmaps</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">search</button>
+<button class="bg-primary text-on-primary px-md py-xs font-code-sm text-code-sm font-bold rounded hover:opacity-90 transition-all duration-200">Sign In</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-xl">
+<!-- Page Header -->
+<section class="mb-xl">
+<h1 class="font-display-lg text-display-lg text-primary mb-base syntax-glow">Engineering Blog</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">In-depth articles, tutorials, and system design case studies curated for the backend architect.</p>
+</section>
+<!-- Categories -->
+<nav class="flex overflow-x-auto pb-md mb-lg gap-sm scrollbar-hide border-b border-outline-variant/30">
+<button class="px-md py-xs bg-primary-container text-on-primary-container font-code-sm text-code-sm rounded-lg whitespace-nowrap">All</button>
+<button class="px-md py-xs text-on-surface-variant hover:bg-surface-variant/50 transition-all font-code-sm text-code-sm rounded-lg whitespace-nowrap">System Design</button>
+<button class="px-md py-xs text-on-surface-variant hover:bg-surface-variant/50 transition-all font-code-sm text-code-sm rounded-lg whitespace-nowrap">Databases</button>
+<button class="px-md py-xs text-on-surface-variant hover:bg-surface-variant/50 transition-all font-code-sm text-code-sm rounded-lg whitespace-nowrap">Java</button>
+<button class="px-md py-xs text-on-surface-variant hover:bg-surface-variant/50 transition-all font-code-sm text-code-sm rounded-lg whitespace-nowrap">DevOps</button>
+</nav>
+<!-- Featured Article -->
+<article class="card-elevation-1 rounded-xl overflow-hidden mb-xl grid grid-cols-1 lg:grid-cols-2">
+<div class="relative h-64 lg:h-full">
+<img class="w-full h-full object-cover" data-alt="A cinematic overhead shot of a futuristic server room with rows of processing units glowing in electric blue and slate grey. The lighting is low-key, emphasizing the architectural grid of cables and hardware, creating a highly technical and professional atmosphere suitable for a deep-dive engineering blog. Subtle light trails suggest high-speed data movement in a dark-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf0EQJUd4P-jZghpQLsXzSlGGgpRB9uADcnA-LncH-7N1bkMLH_hu50MVH9ieBKzInz_5IA4Ojb5B4vXICKDFkJFpyiB-LQ3hY1KvdWAc-FWqKtFiDQ7sNaJgZQHbSCseKjaefHBrfUpeMx1dc0yNaoBQk5vcZz8p_qtCQsv5Qo4jQrnsu65p0KB0YOTLnuuT9XvkQ3dxvBH49Z7xb9X9V2mJWQFri2mzG26DafGTWFjPyreCrDwyXESrfZ_QwoVmlaLV6fuAWNhWP"/>
+</div>
+<div class="p-lg flex flex-col justify-center">
+<div class="inline-flex items-center px-xs py-base bg-tertiary-container/20 text-tertiary border border-tertiary/30 font-label-caps text-label-caps mb-md w-fit rounded">Featured Case Study</div>
+<h2 class="font-headline-md text-headline-md text-primary mb-md">Building a Distributed Task Queue from Scratch</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg leading-relaxed">
+                    Learn how to handle massive scale and ensure exactly-once delivery using Redis and Go. We dive deep into the internals of lock management and message reliability.
+                </p>
+<div class="flex items-center gap-md mb-lg">
+<div class="w-10 h-10 rounded-full bg-surface-variant border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<p class="font-code-sm text-code-sm text-on-surface font-bold">Dr. Elena Vance</p>
+<p class="font-code-sm text-code-sm text-on-surface-variant">Principal Engineer</p>
+</div>
+</div>
+<button class="w-fit bg-primary text-on-primary px-lg py-md font-code-sm text-code-sm font-bold rounded hover:opacity-90 transition-all flex items-center gap-xs group">
+                    Read Article
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</article>
+<!-- Article Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter mb-xl">
+<!-- Card 1 -->
+<a class="card-elevation-1 rounded-xl p-md flex flex-col h-full group" href="#">
+<div class="flex justify-between items-start mb-md">
+<span class="px-xs py-base bg-surface-variant text-on-surface-variant border border-outline-variant font-label-caps text-label-caps rounded">Databases</span>
+<span class="font-code-sm text-[12px] text-on-surface-variant">Jan 12, 2024</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-primary mb-md group-hover:text-primary-container transition-colors">Optimizing Postgres for Write-Heavy Workloads</h3>
+<p class="font-body-md text-on-surface-variant mb-lg flex-grow">Deep dive into VACUUM strategies, WAL tuning, and index overhead management for high-throughput systems.</p>
+<div class="flex items-center text-primary font-code-sm text-code-sm gap-xs">
+                    Read More <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</div>
+</a>
+<!-- Card 2 -->
+<a class="card-elevation-1 rounded-xl p-md flex flex-col h-full group" href="#">
+<div class="flex justify-between items-start mb-md">
+<span class="px-xs py-base bg-surface-variant text-on-surface-variant border border-outline-variant font-label-caps text-label-caps rounded">System Design</span>
+<span class="font-code-sm text-[12px] text-on-surface-variant">Jan 10, 2024</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-primary mb-md group-hover:text-primary-container transition-colors">The LMAX Architecture: High Performance Messaging</h3>
+<p class="font-body-md text-on-surface-variant mb-lg flex-grow">Understanding the Disruptor pattern and how to achieve ultra-low latency in modern Java environments.</p>
+<div class="flex items-center text-primary font-code-sm text-code-sm gap-xs">
+                    Read More <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</div>
+</a>
+<!-- Card 3 -->
+<a class="card-elevation-1 rounded-xl p-md flex flex-col h-full group" href="#">
+<div class="flex justify-between items-start mb-md">
+<span class="px-xs py-base bg-surface-variant text-on-surface-variant border border-outline-variant font-label-caps text-label-caps rounded">Java</span>
+<span class="font-code-sm text-[12px] text-on-surface-variant">Jan 08, 2024</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-primary mb-md group-hover:text-primary-container transition-colors">Modern Concurrent Programming with Virtual Threads</h3>
+<p class="font-body-md text-on-surface-variant mb-lg flex-grow">How Project Loom changes the way we write scalable servers without the complexity of reactive reactive streams.</p>
+<div class="flex items-center text-primary font-code-sm text-code-sm gap-xs">
+                    Read More <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</div>
+</a>
+<!-- Card 4 -->
+<a class="card-elevation-1 rounded-xl p-md flex flex-col h-full group" href="#">
+<div class="flex justify-between items-start mb-md">
+<span class="px-xs py-base bg-surface-variant text-on-surface-variant border border-outline-variant font-label-caps text-label-caps rounded">DevOps</span>
+<span class="font-code-sm text-[12px] text-on-surface-variant">Jan 05, 2024</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-primary mb-md group-hover:text-primary-container transition-colors">Kubernetes Networking Deep Dive</h3>
+<p class="font-body-md text-on-surface-variant mb-lg flex-grow">Exploring CNI, Service Mesh, and how packets flow from the edge to your microservices in a cluster.</p>
+<div class="flex items-center text-primary font-code-sm text-code-sm gap-xs">
+                    Read More <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</div>
+</a>
+<!-- Card 5 -->
+<a class="card-elevation-1 rounded-xl p-md flex flex-col h-full group" href="#">
+<div class="flex justify-between items-start mb-md">
+<span class="px-xs py-base bg-surface-variant text-on-surface-variant border border-outline-variant font-label-caps text-label-caps rounded">System Design</span>
+<span class="font-code-sm text-[12px] text-on-surface-variant">Jan 02, 2024</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-primary mb-md group-hover:text-primary-container transition-colors">Scaling to 100k Requests Per Second</h3>
+<p class="font-body-md text-on-surface-variant mb-lg flex-grow">Tactical advice on caching, load balancing, and database connection pooling under extreme pressure.</p>
+<div class="flex items-center text-primary font-code-sm text-code-sm gap-xs">
+                    Read More <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</div>
+</a>
+<!-- Card 6 -->
+<a class="card-elevation-1 rounded-xl p-md flex flex-col h-full group" href="#">
+<div class="flex justify-between items-start mb-md">
+<span class="px-xs py-base bg-surface-variant text-on-surface-variant border border-outline-variant font-label-caps text-label-caps rounded">Databases</span>
+<span class="font-code-sm text-[12px] text-on-surface-variant">Dec 28, 2023</span>
+</div>
+<h3 class="font-headline-md text-[20px] text-primary mb-md group-hover:text-primary-container transition-colors">Sharding Strategies for Global Scale</h3>
+<p class="font-body-md text-on-surface-variant mb-lg flex-grow">When to shard, how to choose a partition key, and the operational reality of managing distributed databases.</p>
+<div class="flex items-center text-primary font-code-sm text-code-sm gap-xs">
+                    Read More <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</div>
+</a>
+</div>
+<!-- Load More -->
+<div class="flex justify-center">
+<button class="px-xl py-md border border-primary text-primary font-code-sm text-code-sm font-bold rounded-lg hover:bg-primary/10 transition-all flex items-center gap-sm">
+                Load More Articles
+                <span class="material-symbols-outlined">expand_more</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter px-margin-desktop py-xl max-w-[1440px] mx-auto font-body-md text-body-md">
+<div>
+<h4 class="font-headline-md text-headline-md text-primary mb-md">CodeBlog Academy</h4>
+<p class="text-on-surface-variant mb-md max-w-xs">Master the craft of backend engineering with high-fidelity technical content.</p>
+<div class="flex gap-md">
+<a class="text-on-surface-variant hover:text-primary transition-colors material-symbols-outlined" href="#">terminal</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors material-symbols-outlined" href="#">cloud_done</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors material-symbols-outlined" href="#">code_blocks</a>
+</div>
+</div>
+<div>
+<h5 class="font-code-sm font-bold text-on-surface mb-md">Platform</h5>
+<ul class="space-y-xs font-code-sm">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Courses</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Roadmaps</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">API Reference</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Changelog</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-code-sm font-bold text-on-surface mb-md">Company</h5>
+<ul class="space-y-xs font-code-sm mb-lg">
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Engineering Blog</a></li>
+<li><a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+</ul>
+<p class="text-[12px] text-on-surface-variant opacity-60">© 2024 CodeBlog Academy. Engineered for deep work.</p>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interaction: Smooth hover for cards
+        document.querySelectorAll('.card-elevation-1').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>
