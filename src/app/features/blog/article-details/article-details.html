@@ -1,1 +1,39 @@
-<p>article-details works!</p>
+<div class="article-layout">
+  <app-header [isLoggedIn]="true"></app-header>
+
+  <main class="main-content">
+    <article class="article-container">
+      <!-- Article Header -->
+      <header class="article-header">
+        <div class="meta-row">
+          <span class="category-badge">{{ article.category }}</span>
+          <span class="date">{{ article.date }}</span>
+        </div>
+        <h1 class="article-title syntax-glow">{{ article.title }}</h1>
+        
+        <div class="author-info">
+          <img [src]="article.authorAvatar" alt="Author Avatar" class="author-avatar" />
+          <div class="author-text">
+            <p class="author-name">{{ article.author }}</p>
+            <p class="author-role">{{ article.authorRole }}</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Cover Image -->
+      <div class="cover-image-container">
+        <img [src]="article.coverImage" alt="Article Cover" class="cover-image" />
+      </div>
+
+      <!-- Article Content -->
+      <div class="article-body" [innerHTML]="article.content"></div>
+    </article>
+  </main>
+  
+  <!-- Footer (Simplified for now) -->
+  <footer class="blog-footer">
+    <div class="footer-content">
+      <p class="copyright">© 2024 CodeBlog Academy. Engineered for deep work.</p>
+    </div>
+  </footer>
+</div>

@@ -1,11 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BlogCard, BlogPost } from './components/blog-card/blog-card';
+import { HeaderComponent } from '../../shared/components/header/header';
 
 @Component({
   selector: 'app-blog',
   standalone: true,
-  imports: [CommonModule, BlogCard],
+  imports: [CommonModule, BlogCard, HeaderComponent],
   templateUrl: './blog.html',
   styleUrl: './blog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

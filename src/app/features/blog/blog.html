@@ -1,22 +1,6 @@
 <div class="blog-layout">
   <!-- TopNavBar -->
-  <header class="top-nav">
-    <div class="nav-content">
-      <div class="nav-left">
-        <a class="brand" href="#">CodeBlog Academy</a>
-        <nav class="desktop-nav">
-          <a href="#">Learn</a>
-          <a href="#" class="active">Articles</a>
-          <a href="#">Roadmaps</a>
-          <a href="#">Community</a>
-        </nav>
-      </div>
-      <div class="nav-right">
-        <button class="material-symbols-outlined action-btn">search</button>
-        <button class="btn-primary">Sign In</button>
-      </div>
-    </div>
-  </header>
+  <app-header [isLoggedIn]="true"></app-header>
 
   <main class="main-content">
     <!-- Page Header -->

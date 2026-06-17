@@ -51,6 +51,11 @@ export const routes: Routes = [
       import('./features/blog/blog').then((m) => m.Blog),
   },
   {
+    path: 'blog/:id',
+    loadComponent: () =>
+      import('./features/blog/article-details/article-details').then((m) => m.ArticleDetailsComponent),
+  },
+  {
     path: '',
     loadComponent: () =>
       import('./features/landing/landing.component').then((m) => m.LandingComponent),

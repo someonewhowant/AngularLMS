@@ -1,0 +1,194 @@
+$background: #0A0A0A;
+$surface: #10131a;
+$surface-container-lowest: #0b0e15;
+$surface-variant: #32353c;
+$on-surface: #e1e2ec;
+$on-surface-variant: #c2c6d6;
+$outline-variant: #424754;
+
+$primary: #3b82f6;
+$primary-container: #1e3a8a;
+
+.article-layout {
+  min-height: 100vh;
+  background-color: $background;
+  color: $on-surface;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 80px 16px;
+  
+  @media (min-width: 768px) {
+    padding: 80px 32px;
+  }
+}
+
+.article-header {
+  margin-bottom: 48px;
+  
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    
+    .category-badge {
+      padding: 4px 12px;
+      background-color: $surface-variant;
+      color: $on-surface-variant;
+      border: 1px solid $outline-variant;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: $on-surface-variant;
+    }
+  }
+  
+  .article-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 40px;
+    font-weight: 700;
+    color: $primary;
+    margin-bottom: 32px;
+    margin-top: 0;
+    line-height: 1.2;
+    
+    &.syntax-glow {
+      text-shadow: 0 0 8px rgba(173, 198, 255, 0.3);
+    }
+  }
+  
+  .author-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .author-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid $primary;
+      object-fit: cover;
+    }
+    
+    .author-text {
+      .author-name {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 16px;
+        font-weight: 700;
+        color: $on-surface;
+        margin: 0;
+      }
+      
+      .author-role {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        color: $primary;
+        margin: 4px 0 0 0;
+      }
+    }
+  }
+}
+
+.cover-image-container {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 48px;
+  border: 1px solid $outline-variant;
+  
+  @media (min-width: 768px) {
+    height: 400px;
+  }
+  
+  .cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.article-body {
+  font-size: 18px;
+  line-height: 1.8;
+  color: $on-surface-variant;
+  
+  ::ng-deep {
+    h2 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: $on-surface;
+      margin-top: 48px;
+      margin-bottom: 24px;
+    }
+    
+    h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 600;
+      color: $on-surface;
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+    
+    p {
+      margin-bottom: 24px;
+    }
+    
+    pre {
+      background-color: $surface;
+      border: 1px solid $outline-variant;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      
+      code {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        color: #e1e2ec;
+      }
+    }
+    
+    .highlight {
+      background-color: rgba($primary, 0.2);
+      color: $primary;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+    }
+  }
+}
+
+.blog-footer {
+  background-color: $surface-container-lowest;
+  border-top: 1px solid $outline-variant;
+  padding: 32px 16px;
+  text-align: center;
+  
+  .copyright {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: $on-surface-variant;
+    opacity: 0.6;
+    margin: 0;
+  }
+}
