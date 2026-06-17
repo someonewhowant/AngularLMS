@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $surface-variant: #32353c;
 $on-surface-variant: #c2c6d6;
 $outline-variant: #424754;
@@ -21,7 +23,7 @@ $primary-container: #1e3a8a;
     box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
     
     .title {
-      color: lighten($primary, 15%);
+      color: color.adjust($primary, $lightness: 15%);
     }
   }
 }

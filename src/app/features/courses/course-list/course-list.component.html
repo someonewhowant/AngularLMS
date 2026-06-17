@@ -1,24 +1,6 @@
 <div class="courses-layout">
   <!-- Top Navigation -->
-  <header class="navbar">
-    <div class="nav-container">
-      <div class="brand">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M13 14h3"/></svg>
-        <span>CodeBlog Academy</span>
-      </div>
-      <nav class="nav-links">
-        <a routerLink="/dashboard" class="nav-link">Dashboard</a>
-        <a routerLink="/courses" class="nav-link active">Courses</a>
-      </nav>
-      <div class="user-menu">
-        @if (authService.isAuthenticated()) {
-          <button class="btn-logout" (click)="logout()">Sign Out</button>
-        } @else {
-          <a routerLink="/login" class="nav-link-login">Sign In</a>
-        }
-      </div>
-    </div>
-  </header>
+  <app-header [isLoggedIn]="authService.isAuthenticated()"></app-header>
 
   <main class="courses-content">
     <!-- Header -->

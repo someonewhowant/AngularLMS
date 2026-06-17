@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 import { CourseService } from '../../core/services/course.service';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { AuthService } from '../../core/services/auth.service';
+import { HeaderComponent } from '../../shared/components/header/header';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink, ButtonComponent],
+  imports: [RouterLink, ButtonComponent, HeaderComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

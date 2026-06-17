@@ -1,4 +1,6 @@
 // Variables for Syntactic Dark Theme (Extracted from UI config)
+@use 'sass:color';
+
 $surface: #10131a;
 $surface-container: #1d2027;
 $surface-container-lowest: #0b0e15;
@@ -366,7 +368,7 @@ $secondary: #bcc7de;
     &:hover {
       text-decoration: none;
       transform: translateX(4px);
-      color: lighten($primary, 10%);
+      color: color.adjust($primary, $lightness: 10%);
     }
   }
   
@@ -380,7 +382,7 @@ $secondary: #bcc7de;
     
     &:hover {
       text-decoration: none;
-      color: lighten($secondary, 10%);
+      color: color.adjust($secondary, $lightness: 10%);
     }
   }
 }
