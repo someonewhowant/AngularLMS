@@ -20,14 +20,15 @@
       </h1>
 
       <p class="hero-subtitle">
-        Stop watching tutorials. Start building enterprise-grade applications. Our interactive platform bridges the gap between theory and production-ready backend skills.
+        Stop watching tutorials. Start building enterprise-grade applications. Our interactive platform bridges the gap
+        between theory and production-ready backend skills.
       </p>
 
       <div class="hero-buttons">
         @if (authService.isAuthenticated()) {
-          <app-button routerLink="/dashboard" variant="primary" size="lg">Go to Dashboard</app-button>
+        <app-button routerLink="/dashboard" variant="primary" size="lg">Go to Dashboard</app-button>
         } @else {
-          <app-button routerLink="/login" variant="primary" size="lg">Start Learning Free</app-button>
+        <app-button routerLink="/login" variant="primary" size="lg">Start Learning Free</app-button>
         }
         <app-button routerLink="/login" variant="outline" size="lg">
           Explore Curriculum
@@ -73,46 +74,48 @@
 
       <div class="courses-grid">
         @for (course of featuredCourses(); track course.id) {
-          <div class="course-card">
-            <div class="course-card-image">
-              <img [src]="course.thumbnail" [alt]="course.title" />
-              <div class="course-level-badge" [class]="course.difficulty.toLowerCase()">
-                {{ course.difficulty }}
-              </div>
-              <div class="course-category-tag">
-                {{ course.category }}
-              </div>
+        <div class="course-card">
+          <div class="course-card-image">
+            <img [src]="course.thumbnail" [alt]="course.title" />
+            <div class="course-level-badge" [class]="course.difficulty.toLowerCase()">
+              {{ course.difficulty }}
             </div>
-            <div class="course-card-content">
-              <h3 class="course-card-title">{{ course.title }}</h3>
-              <p class="course-card-desc">{{ course.description }}</p>
-              
-              <div class="course-card-meta">
-                <div class="meta-item">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
-                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
-                  </svg>
-                  <span>{{ course.duration }}</span>
-                </div>
-                <div class="meta-item">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M11.5 6.027a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm2.5-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm-2.5-3a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm-.5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/>
-                    <path d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2z"/>
-                  </svg>
-                  <span>{{ course.lessonsCount }} Lessons</span>
-                </div>
-              </div>
-
-              <div class="course-card-actions">
-                @if (authService.isAuthenticated()) {
-                  <app-button routerLink="/courses" variant="primary" size="md">Enroll &amp; Play</app-button>
-                } @else {
-                  <app-button routerLink="/login" variant="primary" size="md">Start Learning</app-button>
-                }
-              </div>
+            <div class="course-category-tag">
+              {{ course.category }}
             </div>
           </div>
+          <div class="course-card-content">
+            <h3 class="course-card-title">{{ course.title }}</h3>
+            <p class="course-card-desc">{{ course.description }}</p>
+
+            <div class="course-card-meta">
+              <div class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+                  <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+                </svg>
+                <span>{{ course.duration }}</span>
+              </div>
+              <div class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path
+                    d="M11.5 6.027a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm2.5-.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm-2.5-3a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1zm-.5.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" />
+                  <path
+                    d="M14 0a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12zM2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2z" />
+                </svg>
+                <span>{{ course.lessonsCount }} Lessons</span>
+              </div>
+            </div>
+
+            <div class="course-card-actions">
+              @if (authService.isAuthenticated()) {
+              <app-button routerLink="/courses" variant="primary" size="md">Enroll &amp; Play</app-button>
+              } @else {
+              <app-button routerLink="/login" variant="primary" size="md">Start Learning</app-button>
+              }
+            </div>
+          </div>
+        </div>
         }
       </div>
     </div>
@@ -124,7 +127,8 @@
       <div class="section-center-header">
         <h2 class="section-title">Why CodeBlog Academy?</h2>
         <p class="section-subtitle">
-          We focus on depth, not just syntax. Learn the architecture, patterns, and decisions that senior engineers make.
+          We focus on depth, not just syntax. Learn the architecture, patterns, and decisions that senior engineers
+          make.
         </p>
       </div>
 
@@ -160,9 +164,9 @@
       <h2 class="cta-title">Ready to elevate your engineering career?</h2>
       <p class="cta-desc">Join CodeBlog Academy today and get access to our complete curriculum.</p>
       @if (authService.isAuthenticated()) {
-        <app-button routerLink="/dashboard" variant="primary" size="lg">Go to Dashboard</app-button>
+      <app-button routerLink="/dashboard" variant="primary" size="lg">Go to Dashboard</app-button>
       } @else {
-        <app-button routerLink="/login" variant="primary" size="lg">Create Free Account</app-button>
+      <app-button routerLink="/login" variant="primary" size="lg">Create Free Account</app-button>
       }
     </div>
   </section>
