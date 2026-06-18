@@ -14,7 +14,7 @@
       @for (category of categories; track category) {
         <button 
           class="category-btn" 
-          [class.active]="activeCategory === category"
+          [class.active]="activeCategory() === category"
           (click)="setCategory(category)">
           {{ category }}
         </button>
@@ -50,7 +50,7 @@
 
     <!-- Article Grid -->
     <div class="article-grid">
-      @for (post of posts; track post.id) {
+      @for (post of posts(); track post.id) {
         <app-blog-card [post]="post"></app-blog-card>
       }
     </div>

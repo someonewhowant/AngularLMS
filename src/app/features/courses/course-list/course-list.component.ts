@@ -2,13 +2,12 @@ import { Component, inject, ChangeDetectionStrategy, signal, computed } from '@a
 import { RouterLink } from '@angular/router';
 import { CourseService } from '@core/services/course.service';
 import { AuthService } from '@core/services/auth.service';
-import { ButtonComponent } from '@shared/components/button/button.component';
 import { HeaderComponent } from '@shared/components/header/header';
 import { Course } from '@core/models/user.model';
 
 @Component({
   selector: 'app-course-list',
-  imports: [RouterLink, ButtonComponent, HeaderComponent],
+  imports: [RouterLink, HeaderComponent],
   templateUrl: './course-list.component.html',
   styleUrl: './course-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

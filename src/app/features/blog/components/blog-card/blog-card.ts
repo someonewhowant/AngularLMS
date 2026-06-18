@@ -1,13 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-export interface BlogPost {
-  id: string;
-  category: string;
-  date: string;
-  title: string;
-  excerpt: string;
-}
+import { BlogPost } from '../../../../core/models/blog.model';
 
 @Component({
   selector: 'app-blog-card',

@@ -2,13 +2,13 @@ import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@ang
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CourseService } from '@core/services/course.service';
 import { AuthService } from '@core/services/auth.service';
-import { ButtonComponent } from '@shared/components/button/button.component';
+import { HeaderComponent } from '@shared/components/header/header';
 import { Course } from '@core/models/user.model';
 
 @Component({
   selector: 'app-course-details',
   standalone: true,
-  imports: [RouterLink, ButtonComponent],
+  imports: [RouterLink, HeaderComponent],
   templateUrl: './course-details.component.html',
   styleUrl: './course-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

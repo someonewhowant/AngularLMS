@@ -22,6 +22,8 @@ export interface Course {
   xpReward: number;
   enrolled?: boolean;
   progress?: number; // 0 to 100
+  rating?: number;
+  price?: number;
 }
 
 export interface AuthResponse {

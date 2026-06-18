@@ -1,151 +1,196 @@
-<div class="details-layout">
-  <!-- Top Navigation -->
-  <header class="navbar">
-    <div class="nav-container">
-      <div class="brand">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/><path d="M13 14h3"/></svg>
-        <span>CodeBlog Academy</span>
-      </div>
-      <nav class="nav-links">
-        <a routerLink="/dashboard" class="nav-link">Dashboard</a>
-        <a routerLink="/courses" class="nav-link active">Courses</a>
-      </nav>
-      <div class="user-menu">
-        @if (authService.isAuthenticated()) {
-          <a routerLink="/dashboard" class="nav-link-profile">My Dashboard</a>
-        } @else {
-          <a routerLink="/login" class="nav-link-login">Sign In</a>
-        }
-      </div>
-    </div>
-  </header>
+<div class="courses-layout fade-in">
+  <app-header [isLoggedIn]="authService.isAuthenticated()"></app-header>
 
-  <main class="details-content">
+  <div class="container py-l">
     @if (isLoading()) {
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        <p>Loading course information...</p>
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; gap: 1rem;">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem; border: 0.25em solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spinner-border .75s linear infinite;"></div>
+        <p class="text-dim">Loading course information...</p>
       </div>
     } @else {
       @if (course(); as c) {
-        <div class="course-grid">
-          <!-- Main Content Info -->
-          <div class="main-info">
-            <nav class="breadcrumb">
-              <a routerLink="/courses">Courses</a>
-              <span class="sep">/</span>
-              <span class="active">{{ c.category }}</span>
-            </nav>
+        <!-- Breadcrumbs -->
+        <nav class="course-breadcrumbs" style="display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim); margin-bottom: 32px; background: var(--bg-surface); padding: 12px 20px; border-radius: var(--radius); border: 1px solid var(--border-subtle); backdrop-filter: blur(10px);">
+          <a routerLink="/" style="color: var(--accent-blue); text-decoration: none;"><i class="bi bi-house-door"></i> Home</a>
+          <i class="bi bi-chevron-right" style="font-size: 0.7rem; opacity: 0.5;"></i>
+          <a routerLink="/courses" style="color: var(--accent-blue); text-decoration: none;">Academy</a>
+          <i class="bi bi-chevron-right" style="font-size: 0.7rem; opacity: 0.5;"></i>
+          <span style="color: var(--text-main); font-weight: 500;">{{ c.title }}</span>
+        </nav>
 
-            <header class="hero-header">
-              <span class="difficulty-tag {{ c.difficulty.toLowerCase() }}">{{ c.difficulty }}</span>
-              <h1>{{ c.title }}</h1>
-              <p class="description">{{ c.description }}</p>
+        <div class="course-layout">
+          <!-- Left Sidebar: Course Map -->
+          <aside class="course-sidebar">
+            <div class="card-glass" style="padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-subtle);">
+              <h3 class="font-mono text-dim" style="font-size: 0.85rem; text-transform: uppercase; margin: 0 0 20px; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
+                <i class="bi bi-map text-blue"></i> [ course_map ]
+              </h3>
 
-              <div class="metadata-row">
-                <div class="meta-item">
-                  <span class="label">Instructor</span>
-                  <span class="val">{{ c.instructorName }}</span>
+              <!-- Course Progress Tracker -->
+              <div class="course-sidebar-progress" style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
+                <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.75rem; margin-bottom: 8px;">
+                  <span class="text-dim">PROGRESS</span>
+                  <span class="text-green">{{ c.enrolled ? '1 / ' + syllabus.length : '0 / ' + syllabus.length }}</span>
                 </div>
-                <div class="meta-item">
-                  <span class="label">Duration</span>
-                  <span class="val">{{ c.duration }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="label">XP Reward</span>
-                  <span class="val highlight">+{{ c.xpReward }} XP</span>
+                <div style="height: 6px; background: rgba(128,128,128,0.1); border-radius: 3px; overflow: hidden;">
+                  <div [style.width]="c.enrolled ? '33%' : '0%'" style="height: 100%; background: var(--accent-green); transition: width 0.3s ease;"></div>
                 </div>
               </div>
-            </header>
 
-            <!-- Syllabus Section -->
-            <section class="syllabus-section">
-              <h3>Course Syllabus</h3>
-              <p class="section-desc">Follow a structured learning path with step-by-step guidance.</p>
-
-              <div class="syllabus-list">
+              <ul class="course-map__list" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px;">
+                <li class="course-map__item active" style="background: rgba(88, 166, 255, 0.1); border-radius: var(--radius);">
+                  <a style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; text-decoration: none; color: var(--accent-blue); font-weight: 600;">
+                    <i class="bi bi-info-circle"></i> Overview
+                  </a>
+                </li>
                 @for (module of syllabus; track module.title; let idx = $index) {
-                  <div class="module-item">
-                    <div class="module-header">
-                      <div class="module-title-box">
-                        <span class="idx">0{{ idx + 1 }}</span>
-                        <h4>{{ module.title }}</h4>
+                  <li class="course-map__item">
+                    <a style="display: flex; flex-direction: column; padding: 12px 16px; border-radius: var(--radius); text-decoration: none; color: var(--text-dim);">
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="bi bi-journal-code"></i>
+                        <span>{{ module.title }}</span>
                       </div>
-                      <span class="duration">{{ module.duration }}</span>
-                    </div>
-                    <ul class="lesson-list">
-                      @for (lesson of module.lessons; track lesson) {
-                        <li>
-                          <span class="bullet">🚀</span>
-                          <span class="text">{{ lesson }}</span>
-                        </li>
-                      }
-                    </ul>
-                  </div>
+                    </a>
+                  </li>
                 }
-              </div>
-            </section>
-          </div>
-
-          <!-- Action Sidebar Card -->
-          <aside class="sidebar">
-            <div class="action-card">
-              <div class="card-thumb">
-                <img [src]="c.thumbnail" [alt]="c.title" />
-                <div class="overlay-play">
-                  <span class="play-icon">▶</span>
-                </div>
-              </div>
-
-              <div class="card-body">
-                <div class="price-box">
-                  <span class="price-label">Access Type</span>
-                  <span class="price-val">Free Enrollment</span>
-                </div>
-
-                @if (enrollError()) {
-                  <div class="error-msg">{{ enrollError() }}</div>
-                }
-
-                <div class="actions">
-                  @if (c.enrolled) {
-                    <app-button
-                      routerLink="/dashboard"
-                      variant="primary"
-                      size="lg">
-                      Go to Dashboard
-                    </app-button>
-                  } @else {
-                    <app-button
-                      variant="primary"
-                      size="lg"
-                      [loading]="isEnrolling()"
-                      (btnClick)="enroll()">
-                      Enroll in Course
-                    </app-button>
-                  }
-                </div>
-
-                <div class="features-list">
-                  <h5>This course includes:</h5>
-                  <ul>
-                    <li>🕒 Self-paced online lectures</li>
-                    <li>🔥 Interactive sandbox labs</li>
-                    <li>🏆 Certificate of completion</li>
-                    <li>⚡ Lifetime dashboard access</li>
-                  </ul>
-                </div>
-              </div>
+              </ul>
             </div>
           </aside>
+
+          <!-- Right: Main Content -->
+          <main class="course-main">
+            <article class="post">
+              <!-- Header -->
+              <header style="margin-bottom: 40px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                  <span class="profile-role-badge" style="background: rgba(88, 166, 255, 0.1); color: var(--accent-blue); border: 1px solid rgba(88, 166, 255, 0.3); padding: 4px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.85rem; text-transform: uppercase;">
+                    {{ c.difficulty }}
+                  </span>
+                  <div style="display: flex; gap: 12px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim); align-items: center;">
+                    <span><i class="bi bi-clock text-blue"></i> {{ c.duration }}</span>
+                    <span>|</span>
+                    <span class="text-gradient-purple" style="font-weight: 600;">+{{ c.xpReward }} XP</span>
+                  </div>
+                </div>
+
+                <h1 style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.1; margin: 0; letter-spacing: -0.02em;">
+                  <span class="text-gradient-blue">{{ c.title }}</span>
+                </h1>
+                <p style="font-size: 1.15rem; line-height: 1.6; color: var(--text-dim); margin-top: 1.5rem;">
+                  {{ c.description }}
+                </p>
+              </header>
+
+              <!-- Image Banner -->
+              @if (c.thumbnail) {
+                <div style="margin-bottom: 40px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 32px rgba(0,0,0,0.3); position: relative;">
+                  <img [src]="c.thumbnail" [alt]="c.title" style="width: 100%; display: block; object-fit: cover; max-height: 380px;">
+                </div>
+              }
+
+              <!-- Grid Content: Action panel & Syllabus details -->
+              <div style="display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; margin-top: 2rem;">
+                <!-- Syllabus Details -->
+                <div>
+                  <h3 class="font-mono text-blue" style="font-size: 1.25rem; letter-spacing: 0.05em; margin-bottom: 24px; display: flex; align-items: center; gap: 8px;">
+                    <i class="bi bi-journal-code"></i> COURSE_SYLLABUS
+                  </h3>
+
+                  <div style="display: grid; gap: 20px;">
+                    @for (module of syllabus; track module.title; let idx = $index) {
+                      <div class="card-glass" style="padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-left: 4px solid var(--accent-purple);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                          <h4 style="font-size: 1.1rem; margin: 0; font-weight: 600; color: var(--text-main);">
+                            <span style="font-family: var(--font-mono); color: var(--accent-purple); margin-right: 8px;">0{{ idx + 1 }}</span>
+                            {{ module.title }}
+                          </h4>
+                          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);">{{ module.duration }}</span>
+                        </div>
+                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                          @for (lesson of module.lessons; track lesson) {
+                            <li style="display: flex; gap: 8px; font-size: 0.9rem; color: var(--text-dim);">
+                              <span style="color: var(--accent-green);">🚀</span>
+                              <span>{{ lesson }}</span>
+                            </li>
+                          }
+                        </ul>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- Right Enrollment/CTA sidebar box -->
+                <div class="card-glass" style="padding: 24px; background: var(--bg-surface); border: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 20px;">
+                  <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Access Type</span>
+                    <h4 style="margin: 4px 0 0; font-size: 1.3rem; font-weight: 700; color: var(--accent-green);">Free Enrollment</h4>
+                  </div>
+
+                  <!-- Details meta -->
+                  <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); padding: 16px 0; font-size: 0.85rem; color: var(--text-dim);">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>Instructor</span>
+                      <strong style="color: var(--text-main);">{{ c.instructorName }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>Category</span>
+                      <strong style="color: var(--text-main);">{{ c.category }}</strong>
+                    </div>
+                  </div>
+
+                  @if (enrollError()) {
+                    <div style="background: rgba(248, 81, 73, 0.1); border: 1px solid rgba(248, 81, 73, 0.2); color: var(--accent-red); padding: 12px; border-radius: var(--radius); font-size: 0.85rem;">
+                      {{ enrollError() }}
+                    </div>
+                  }
+
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    @if (c.enrolled) {
+                      <a routerLink="/dashboard" class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-decoration: none; padding: 12px; font-family: var(--font-mono); font-size: 0.85rem; background: var(--accent-green); border-color: var(--accent-green); color: #000; font-weight: 700; border-radius: var(--radius);">
+                        GO_TO_DASHBOARD() <i class="bi bi-arrow-right"></i>
+                      </a>
+                    } @else {
+                      <button (click)="enroll()" [disabled]="isEnrolling()" class="btn btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; font-family: var(--font-mono); font-size: 0.85rem; background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; font-weight: 700; border-radius: var(--radius); cursor: pointer;">
+                        @if (isEnrolling()) {
+                          ENROLLING...
+                        } @else {
+                          ENROLL_IN_COURSE() <i class="bi bi-plus-circle"></i>
+                        }
+                      </button>
+                    }
+                  </div>
+
+                  <div style="font-size: 0.8rem; color: var(--text-dim);">
+                    <span style="font-weight: 600; display: block; margin-bottom: 8px; color: var(--text-main);">This course includes:</span>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px;">
+                      <li>🕒 Self-paced online lectures</li>
+                      <li>🔥 Interactive sandbox labs</li>
+                      <li>🏆 Certificate of completion</li>
+                      <li>⚡ Lifetime dashboard access</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Back to Catalog footer link -->
+              <div style="margin-top: 40px; display: flex; gap: 16px;">
+                <a routerLink="/courses" class="btn btn-outline" style="padding: 10px 20px; font-family: var(--font-mono); font-size: 0.85rem; text-decoration: none; border: 1px solid var(--border-subtle); border-radius: var(--radius); color: var(--text-main); display: inline-flex; align-items: center; gap: 8px;">
+                  <i class="bi bi-arrow-left"></i> back_to_catalog()
+                </a>
+              </div>
+            </article>
+          </main>
         </div>
       } @else {
-        <div class="not-found">
+        <div style="text-align: center; padding: 4rem 2rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius);">
+          <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: var(--accent-orange); display: block; margin-bottom: 1rem;"></i>
           <h3>Course Not Found</h3>
-          <p>We couldn't retrieve the details for this course. It might have been unpublished or removed.</p>
-          <app-button routerLink="/courses" variant="outline">Back to Catalog</app-button>
+          <p class="text-dim">We couldn't retrieve the details for this course. It might have been unpublished or removed.</p>
+          <a routerLink="/courses" class="btn btn-outline" style="padding: 10px 20px; font-family: var(--font-mono); font-size: 0.85rem; border: 1px solid var(--border-subtle); border-radius: var(--radius); color: var(--text-main); text-decoration: none; margin-top: 1rem; display: inline-block;">
+            Back to Catalog
+          </a>
         </div>
       }
     }
-  </main>
+  </div>
 </div>

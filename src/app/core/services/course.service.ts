@@ -24,6 +24,8 @@ export class CourseService {
       xpReward: 300,
       enrolled: false,
       progress: 0,
+      rating: 4.8,
+      price: 0,
     },
     {
       id: 'advanced-signals',
@@ -39,6 +41,8 @@ export class CourseService {
       xpReward: 500,
       enrolled: false,
       progress: 0,
+      rating: 4.9,
+      price: 49,
     },
     {
       id: 'css-layouts-premium',
@@ -54,6 +58,8 @@ export class CourseService {
       xpReward: 400,
       enrolled: false,
       progress: 0,
+      rating: 4.7,
+      price: 29,
     },
     {
       id: 'rxjs-in-practice',
@@ -69,6 +75,8 @@ export class CourseService {
       xpReward: 450,
       enrolled: false,
       progress: 0,
+      rating: 4.9,
+      price: 39,
     },
   ];
 

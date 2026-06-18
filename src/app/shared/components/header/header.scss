@@ -1,14 +1,14 @@
-$surface: #10131a;
-$surface-container-highest: #32353c;
-$surface-variant: #32353c;
-$on-surface: #e1e2ec;
-$on-surface-variant: #c2c6d6;
-$outline-variant: #424754;
+$surface: var(--bg-dark);
+$surface-container-highest: var(--bg-surface);
+$surface-variant: var(--bg-surface);
+$on-surface: var(--text-main);
+$on-surface-variant: var(--text-dim);
+$outline-variant: var(--border-subtle);
 
-$primary: #3b82f6;
+$primary: var(--accent-blue);
 $on-primary: #ffffff;
-$error-container: #93000a;
-$on-error-container: #ffdad6;
+$error-container: rgba(248, 81, 73, 0.15);
+$on-error-container: var(--accent-red);
 
 .top-nav {
   position: sticky;

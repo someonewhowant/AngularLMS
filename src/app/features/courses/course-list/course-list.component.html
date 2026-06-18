@@ -1,36 +1,55 @@
-<div class="courses-layout">
-  <!-- Top Navigation -->
+<div class="courses-layout fade-in">
   <app-header [isLoggedIn]="authService.isAuthenticated()"></app-header>
 
-  <main class="courses-content">
-    <!-- Header -->
-    <header class="page-header">
-      <h2>Explore Courses</h2>
-      <p>Upgrade your engineering skills with hands-on labs and premium guides</p>
-    </header>
+  <!-- ===== HERO ===== -->
+  <section class="courses-hero container">
+    <p class="hero-platform__eyebrow">Academy Curriculum</p>
+    <h1>Choose Your<br><span class="highlight">Learning Path</span></h1>
+    <p>
+      Structured, production-grade courses for developers who want to go deep.
+      Pick a track that fits your level and start building expertise today.
+    </p>
 
-    <!-- Filters Section -->
-    <section class="filters-panel">
+    <div class="courses-stats-row">
+      <div class="courses-stat-pill">
+        <i class="bi bi-journal-code" style="color: var(--accent-blue);"></i>
+        <strong>{{ filteredCourses().length }}</strong> Courses
+      </div>
+      <div class="courses-stat-pill">
+        <i class="bi bi-bar-chart-steps" style="color: var(--accent-green);"></i>
+        <strong>3</strong> Skill Levels
+      </div>
+      <div class="courses-stat-pill">
+        <i class="bi bi-clock-history" style="color: var(--accent-purple);"></i>
+        Self <strong>Paced</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FILTER + SEARCH ===== -->
+  <section class="container" style="padding-bottom: var(--space-xl);">
+    <div class="filters-panel" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: flex; flex-direction: column; gap: 1.25rem;">
       <!-- Search Input -->
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
+      <div class="search-box" style="position: relative; width: 100%;">
+        <span class="search-icon" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-dim);">🔍</span>
         <input
           type="text"
           placeholder="Search by title, description, or instructor..."
           [value]="searchQuery()"
           (input)="updateSearch($event)"
           aria-label="Search courses"
+          style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; font-size: 0.875rem; background: var(--bg-dark); border: 1px solid var(--border-subtle); border-radius: var(--radius); color: var(--text-main); outline: none; transition: var(--transition);"
         />
       </div>
 
       <!-- Categories Filter -->
-      <div class="filter-group">
-        <span class="filter-label">Category:</span>
-        <div class="filter-options">
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);">Category:</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
           @for (cat of categories; track cat) {
             <button
               type="button"
-              class="filter-chip"
+              class="filter-btn"
               [class.active]="selectedCategory() === cat"
               (click)="setCategory(cat)">
               {{ cat }}
@@ -39,83 +58,98 @@
         </div>
       </div>
 
-      <!-- Difficulties Filter -->
-      <div class="filter-group">
-        <span class="filter-label">Difficulty:</span>
-        <div class="filter-options">
-          @for (diff of difficulties; track diff) {
-            <button
-              type="button"
-              class="filter-chip"
-              [class.active]="selectedDifficulty() === diff"
-              (click)="setDifficulty(diff)">
-              {{ diff }}
-            </button>
-          }
+      <!-- Difficulty Filter -->
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);">Difficulty:</span>
+        <div class="level-filter-bar" style="justify-content: flex-start; margin-bottom: 0;">
+          <button class="filter-btn" [class.active]="selectedDifficulty() === 'All'" (click)="setDifficulty('All')">
+            <i class="bi bi-grid-3x3-gap"></i> All
+          </button>
+          <button class="filter-btn beginner" [class.active]="selectedDifficulty() === 'Beginner'" (click)="setDifficulty('Beginner')">
+            <i class="bi bi-reception-1"></i> Beginner
+          </button>
+          <button class="filter-btn intermediate" [class.active]="selectedDifficulty() === 'Intermediate'" (click)="setDifficulty('Intermediate')">
+            <i class="bi bi-reception-3"></i> Intermediate
+          </button>
+          <button class="filter-btn advanced" [class.active]="selectedDifficulty() === 'Advanced'" (click)="setDifficulty('Advanced')">
+            <i class="bi bi-reception-4"></i> Advanced
+          </button>
         </div>
       </div>
-    </section>
+    </div>
 
-    <!-- Courses Grid -->
-    <section class="courses-grid-section">
-      @if (filteredCourses().length === 0) {
-        <div class="no-results">
-          <span class="icon">🔍</span>
-          <h4>No courses matched your filters</h4>
-          <p>Try clearing your search query or choosing different category settings.</p>
-        </div>
-      } @else {
-        <div class="courses-grid">
-          @for (course of filteredCourses(); track course.id) {
-            <div class="course-card">
-              <!-- Thumbnail -->
-              <div class="thumbnail-wrapper" [routerLink]="['/courses', course.id]" style="cursor: pointer;">
-                <img [src]="course.thumbnail" [alt]="course.title" class="course-thumb" />
-                <span class="category-badge">{{ course.category }}</span>
+    <!-- ===== COURSES GRID ===== -->
+    @if (filteredCourses().length === 0) {
+      <div id="noResults" class="text-center py-2xl" style="padding: 4rem 2rem; border: 1px dashed var(--border-subtle); border-radius: var(--radius); background: var(--bg-surface);">
+        <i class="bi bi-funnel" style="font-size: 2.5rem; color: var(--text-dim); display: block; margin-bottom: 1rem;"></i>
+        <p class="text-dim">No courses matched your filters.</p>
+      </div>
+    } @else {
+      <div class="courses-grid">
+        @for (course of filteredCourses(); track course.id) {
+          <div class="enh-course-card" [attr.data-level]="course.difficulty">
+            <div class="enh-course-card__header">
+              <div class="enh-course-card__icon"
+                   [class]="course.difficulty.toLowerCase()">
+                <i [class]="course.difficulty === 'Beginner' ? 'bi bi-code-slash' : (course.difficulty === 'Advanced' ? 'bi bi-layers-half' : 'bi bi-lightning-charge')"></i>
               </div>
+              <span class="enh-level-tag"
+                    [class]="course.difficulty.toLowerCase()">{{ course.difficulty }}</span>
+            </div>
 
-              <!-- Body -->
-              <div class="card-body">
-                <div class="card-meta">
-                  <span class="difficulty {{ course.difficulty.toLowerCase() }}">{{ course.difficulty }}</span>
-                  <span class="xp-badge">+{{ course.xpReward }} XP</span>
-                </div>
-                <h3 [routerLink]="['/courses', course.id]" style="cursor: pointer;">{{ course.title }}</h3>
-                <p class="desc">{{ course.description }}</p>
-                <div class="details">
-                  <span>🕒 {{ course.duration }}</span>
-                  <span>📖 {{ course.lessonsCount }} lessons</span>
-                  <span>👥 {{ course.studentsCount }} students</span>
-                </div>
-
-                <!-- Action button -->
-                <div class="card-footer" style="display: flex; gap: 0.5rem; width: 100%;">
-                  <app-button
-                    [routerLink]="['/courses', course.id]"
-                    variant="outline"
-                    size="md"
-                    style="flex: 1;">
-                    Details
-                  </app-button>
-                  @if (course.enrolled) {
-                    <a routerLink="/dashboard" class="enrolled-link" style="flex: 1; text-align: center; white-space: nowrap; line-height: 2.2;">
-                      Enrolled
-                    </a>
-                  } @else {
-                    <app-button
-                      variant="primary"
-                      size="md"
-                      (btnClick)="enrollInCourse(course.id)"
-                      style="flex: 1;">
-                      Enroll
-                    </app-button>
-                  }
-                </div>
+            <div class="enh-course-card__body">
+              <h3 class="enh-course-card__title">{{ course.title }}</h3>
+              <p class="enh-course-card__desc">{{ course.description }}</p>
+              <div class="enh-course-card__meta-row">
+                <span><i class="bi bi-clock"></i> <span>{{ course.duration }}</span></span>
+                <span><i class="bi bi-collection"></i> <span>{{ course.lessonsCount }} lessons</span></span>
+                <span><i class="bi bi-people"></i> <span>{{ course.studentsCount }} students</span></span>
               </div>
             </div>
-          }
+
+            <div class="enh-course-card__footer">
+              <div style="display: flex; gap: 10px; width: 100%;">
+                <a [routerLink]="['/courses', course.id]" class="enh-course-card__cta" style="flex: 1;">
+                  Details <i class="bi bi-arrow-right"></i>
+                </a>
+                @if (course.enrolled) {
+                  <a routerLink="/dashboard" class="enh-course-card__cta" style="flex: 1; background: rgba(63, 185, 80, 0.1); color: var(--accent-green); border-color: rgba(63, 185, 80, 0.2);">
+                    Enrolled <i class="bi bi-check2"></i>
+                  </a>
+                } @else {
+                  <button (click)="enrollInCourse(course.id)" class="enh-course-card__cta" style="flex: 1; background: var(--accent-blue); color: #fff; border-color: var(--accent-blue);">
+                    Enroll <i class="bi bi-plus-circle"></i>
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="container" style="padding-bottom: var(--space-3xl);">
+    <div class="card-glass courses-cta-banner" style="background: var(--bg-surface); border: 1px solid var(--border-subtle);">
+      <div style="position: relative;">
+        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-blue); letter-spacing: 0.1em; text-transform: uppercase;">Corporate &amp; Teams</span>
+        <h2 class="section-title justify-center mt-s mb-m" style="font-family: var(--font-sans); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; justify-content: center;">
+          Need a Custom Workshop?
+        </h2>
+        <p class="text-dim mb-xl mx-auto" style="max-width: 500px; line-height: 1.7; font-size: 1rem; text-align: center; margin-bottom: 2rem;">
+          We offer tailored on-site and remote training sessions for engineering teams.
+          From Java internals to cloud-native architecture — we cover what your team needs.
+        </p>
+        <div style="display: flex; justify-content: center; gap: var(--space-m); flex-wrap: wrap;">
+          <a routerLink="/blog" class="btn btn-primary btn-large" style="display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; font-family: var(--font-mono); font-size: 0.85rem; border: 1px solid var(--accent-blue); background: var(--accent-blue); color: #fff;">
+            Read Blog <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+          <a routerLink="/courses" class="btn btn-outline btn-large" style="display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: var(--radius); font-weight: 600; font-family: var(--font-mono); font-size: 0.85rem; border: 1px solid var(--border-subtle); background: transparent; color: var(--text-main);">
+            Browse All Courses
+          </a>
         </div>
-      }
-    </section>
-  </main>
+      </div>
+    </div>
+  </section>
 </div>
