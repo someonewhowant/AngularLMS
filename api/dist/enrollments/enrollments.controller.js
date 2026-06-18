@@ -38,7 +38,7 @@ exports.EnrollmentsController = EnrollmentsController;
 __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Enroll in a course' }),
-    openapi.ApiResponse({ status: 201, type: Object }),
+    openapi.ApiResponse({ status: 201, type: require("./entities/enrollment.entity").Enrollment }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -48,7 +48,7 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all courses I am enrolled in' }),
-    openapi.ApiResponse({ status: 200, type: Object }),
+    openapi.ApiResponse({ status: 200, type: [require("./entities/enrollment.entity").Enrollment] }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -57,7 +57,7 @@ __decorate([
 __decorate([
     (0, common_1.Delete)('course/:courseId'),
     (0, swagger_1.ApiOperation)({ summary: 'Unenroll from a course' }),
-    openapi.ApiResponse({ status: 200 }),
+    openapi.ApiResponse({ status: 200, type: require("./entities/enrollment.entity").Enrollment }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Param)('courseId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

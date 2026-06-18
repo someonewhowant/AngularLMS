@@ -1,129 +1,13 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Post } from './entities/post.entity';
 export declare class PostsService {
-    private prisma;
-    constructor(prisma: PrismaService);
-    create(authorId: number, data: CreatePostDto): Promise<{
-        category: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string | null;
-        };
-        author: {
-            id: number;
-            email: string;
-            role: string;
-        };
-        tags: {
-            id: number;
-            createdAt: Date;
-            name: string;
-        }[];
-    } & {
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        content: string;
-        published: boolean;
-        authorId: number;
-        categoryId: number;
-    }>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<({
-        category: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string | null;
-        };
-        author: {
-            id: number;
-            email: string;
-            role: string;
-        };
-        tags: {
-            id: number;
-            createdAt: Date;
-            name: string;
-        }[];
-    } & {
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        content: string;
-        published: boolean;
-        authorId: number;
-        categoryId: number;
-    })[]>;
-    findOne(id: number): Promise<{
-        category: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string | null;
-        };
-        author: {
-            id: number;
-            email: string;
-            role: string;
-        };
-        tags: {
-            id: number;
-            createdAt: Date;
-            name: string;
-        }[];
-    } & {
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        content: string;
-        published: boolean;
-        authorId: number;
-        categoryId: number;
-    }>;
-    update(id: number, data: UpdatePostDto): Promise<{
-        category: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string | null;
-        };
-        author: {
-            id: number;
-            email: string;
-            role: string;
-        };
-        tags: {
-            id: number;
-            createdAt: Date;
-            name: string;
-        }[];
-    } & {
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        content: string;
-        published: boolean;
-        authorId: number;
-        categoryId: number;
-    }>;
-    remove(id: number): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        content: string;
-        published: boolean;
-        authorId: number;
-        categoryId: number;
-    }>;
+    private postRepository;
+    constructor(postRepository: Repository<Post>);
+    create(authorId: number, data: CreatePostDto): Promise<Post>;
+    findAll(): Promise<Post[]>;
+    findOne(id: number): Promise<Post>;
+    update(id: number, data: UpdatePostDto): Promise<Post>;
+    remove(id: number): Promise<Post>;
 }

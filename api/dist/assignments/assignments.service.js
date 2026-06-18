@@ -8,19 +8,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssignmentsService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const assignment_entity_1 = require("./entities/assignment.entity");
+const course_module_entity_1 = require("../course-modules/entities/course-module.entity");
 let AssignmentsService = class AssignmentsService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    assignmentRepository;
+    moduleRepository;
+    constructor(assignmentRepository, moduleRepository) {
+        this.assignmentRepository = assignmentRepository;
+        this.moduleRepository = moduleRepository;
     }
     async create(teacherId, userRole, data) {
-        const module = await this.prisma.courseModule.findUnique({
+        const module = await this.moduleRepository.findOne({
             where: { id: data.moduleId },
-            include: { course: true }
+            relations: { course: true }
         });
         if (!module)
             throw new common_1.NotFoundException('Module not found');
@@ -28,22 +36,22 @@ let AssignmentsService = class AssignmentsService {
             throw new common_1.ForbiddenException('You can only add assignments to your own courses');
         }
         const { dueDate, ...assignmentData } = data;
-        return this.prisma.assignment.create({
-            data: {
-                ...assignmentData,
-                dueDate: dueDate ? new Date(dueDate) : null,
-            }
+        const assignment = this.assignmentRepository.create({
+            ...assignmentData,
+            dueDate: dueDate ? new Date(dueDate) : null,
+            moduleId: module.id
         });
+        return this.assignmentRepository.save(assignment);
     }
-    findAllByModule(moduleId) {
-        return this.prisma.assignment.findMany({
+    async findAllByModule(moduleId) {
+        return this.assignmentRepository.find({
             where: { moduleId },
         });
     }
     async findOne(id) {
-        const assignment = await this.prisma.assignment.findUnique({
+        const assignment = await this.assignmentRepository.findOne({
             where: { id },
-            include: { module: { include: { course: true } } }
+            relations: { module: { course: true } }
         });
         if (!assignment)
             throw new common_1.NotFoundException('Assignment not found');
@@ -55,26 +63,26 @@ let AssignmentsService = class AssignmentsService {
             throw new common_1.ForbiddenException('You can only update assignments in your own courses');
         }
         const { dueDate, ...assignmentData } = data;
-        const updateData = { ...assignmentData };
+        Object.assign(assignment, assignmentData);
         if (dueDate !== undefined) {
-            updateData.dueDate = dueDate ? new Date(dueDate) : null;
+            assignment.dueDate = dueDate ? new Date(dueDate) : null;
         }
-        return this.prisma.assignment.update({
-            where: { id },
-            data: updateData,
-        });
+        return this.assignmentRepository.save(assignment);
     }
     async remove(id, teacherId, userRole) {
         const assignment = await this.findOne(id);
         if (assignment.module.course.teacherId !== teacherId && userRole !== 'ADMIN') {
             throw new common_1.ForbiddenException('You can only delete assignments from your own courses');
         }
-        return this.prisma.assignment.delete({ where: { id } });
+        return this.assignmentRepository.remove(assignment);
     }
 };
 exports.AssignmentsService = AssignmentsService;
 exports.AssignmentsService = AssignmentsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, typeorm_1.InjectRepository)(assignment_entity_1.Assignment)),
+    __param(1, (0, typeorm_1.InjectRepository)(course_module_entity_1.CourseModule)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], AssignmentsService);
 //# sourceMappingURL=assignments.service.js.map

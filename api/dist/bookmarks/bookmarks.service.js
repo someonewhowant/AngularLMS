@@ -8,58 +8,69 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookmarksService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const bookmark_entity_1 = require("./entities/bookmark.entity");
 let BookmarksService = class BookmarksService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    bookmarkRepository;
+    constructor(bookmarkRepository) {
+        this.bookmarkRepository = bookmarkRepository;
     }
     async create(userId, data) {
-        const existing = await this.prisma.bookmark.findUnique({
+        const existing = await this.bookmarkRepository.findOne({
             where: {
-                userId_postId: {
-                    userId,
-                    postId: data.postId,
-                }
+                userId,
+                postId: data.postId,
             }
         });
         if (existing) {
             throw new common_1.ConflictException('Post is already in your bookmarks');
         }
-        return this.prisma.bookmark.create({
-            data: { userId, postId: data.postId },
-            include: { post: true }
+        const bookmark = this.bookmarkRepository.create({
+            userId,
+            postId: data.postId
         });
+        await this.bookmarkRepository.save(bookmark);
+        const saved = await this.bookmarkRepository.findOne({
+            where: { id: bookmark.id },
+            relations: { post: true }
+        });
+        if (!saved)
+            throw new common_1.NotFoundException('Bookmark not found after creation');
+        return saved;
     }
-    findAllByUser(userId) {
-        return this.prisma.bookmark.findMany({
+    async findAllByUser(userId) {
+        return this.bookmarkRepository.find({
             where: { userId },
-            include: {
+            relations: {
                 post: {
-                    include: { category: true, tags: true }
+                    category: true,
+                    tags: true
                 }
             },
-            orderBy: { createdAt: 'desc' }
+            order: { createdAt: 'DESC' }
         });
     }
     async remove(userId, postId) {
-        const bookmark = await this.prisma.bookmark.findUnique({
-            where: { userId_postId: { userId, postId } }
+        const bookmark = await this.bookmarkRepository.findOne({
+            where: { userId, postId }
         });
         if (!bookmark) {
             throw new common_1.NotFoundException('Bookmark not found');
         }
-        return this.prisma.bookmark.delete({
-            where: { userId_postId: { userId, postId } }
-        });
+        return this.bookmarkRepository.remove(bookmark);
     }
 };
 exports.BookmarksService = BookmarksService;
 exports.BookmarksService = BookmarksService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, typeorm_1.InjectRepository)(bookmark_entity_1.Bookmark)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], BookmarksService);
 //# sourceMappingURL=bookmarks.service.js.map

@@ -1,57 +1,79 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Course } from './entities/course.entity';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Injectable()
 export class CoursesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Course)
+    private courseRepository: Repository<Course>
+  ) {}
 
-  create(teacherId: number, data: CreateCourseDto) {
-    return this.prisma.course.create({
-      data: { ...data, teacherId },
-      include: { teacher: { select: { id: true, email: true, role: true } } }
+  async create(teacherId: number, data: CreateCourseDto): Promise<Course> {
+    const course = this.courseRepository.create({ ...data, teacherId });
+    await this.courseRepository.save(course);
+    const saved = await this.courseRepository.findOne({
+      where: { id: course.id },
+      relations: { teacher: true },
+    });
+    if (!saved) throw new NotFoundException('Course not found after creation');
+    return saved;
+  }
+
+  async findAll(): Promise<Course[]> {
+    return this.courseRepository.find({
+      relations: { teacher: true },
     });
   }
 
-  findAll() {
-    return this.prisma.course.findMany({
-      include: { teacher: { select: { id: true, email: true, role: true } } }
-    });
-  }
-
-  async findOne(id: number) {
-    const course = await this.prisma.course.findUnique({
+  async findOne(id: number): Promise<Course> {
+    const course = await this.courseRepository.findOne({
       where: { id },
-      include: { 
-        teacher: { select: { id: true, email: true, role: true } },
+      relations: {
+        teacher: true,
         modules: {
-          include: { assignments: true, quizzes: true },
-          orderBy: { order: 'asc' }
+          assignments: true,
+          quizzes: true,
+        }
+      },
+      order: {
+        modules: {
+          order: 'ASC'
         }
       }
     });
-    if (!course) throw new NotFoundException('Course not found');
+
+    if (!course) {
+      throw new NotFoundException('Course not found');
+    }
     return course;
   }
 
-  async update(id: number, teacherId: number, userRole: string, data: UpdateCourseDto) {
+  async update(id: number, teacherId: number, userRole: string, data: UpdateCourseDto): Promise<Course> {
     const course = await this.findOne(id);
     if (course.teacherId !== teacherId && userRole !== 'ADMIN') {
       throw new ForbiddenException('You can only update your own courses');
     }
-    return this.prisma.course.update({
+    
+    Object.assign(course, data);
+    await this.courseRepository.save(course);
+    
+    const updated = await this.courseRepository.findOne({
       where: { id },
-      data,
-      include: { teacher: { select: { id: true, email: true, role: true } } }
+      relations: { teacher: true },
     });
+    if (!updated) throw new NotFoundException('Course not found after update');
+    return updated;
   }
 
-  async remove(id: number, teacherId: number, userRole: string) {
+  async remove(id: number, teacherId: number, userRole: string): Promise<Course> {
     const course = await this.findOne(id);
     if (course.teacherId !== teacherId && userRole !== 'ADMIN') {
       throw new ForbiddenException('You can only delete your own courses');
     }
-    return this.prisma.course.delete({ where: { id } });
+    return this.courseRepository.remove(course);
   }
 }

@@ -8,57 +8,72 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommentsService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const comment_entity_1 = require("./entities/comment.entity");
 let CommentsService = class CommentsService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    commentRepository;
+    constructor(commentRepository) {
+        this.commentRepository = commentRepository;
     }
-    create(authorId, data) {
-        return this.prisma.comment.create({
-            data: {
-                content: data.content,
-                postId: data.postId,
-                authorId,
-            },
-            include: { author: { select: { id: true, email: true, role: true } } }
+    async create(authorId, data) {
+        const comment = this.commentRepository.create({
+            content: data.content,
+            postId: data.postId,
+            authorId,
         });
+        await this.commentRepository.save(comment);
+        const saved = await this.commentRepository.findOne({
+            where: { id: comment.id },
+            relations: { author: true }
+        });
+        if (!saved)
+            throw new common_1.NotFoundException('Comment not found after creation');
+        return saved;
     }
-    findAllByPost(postId) {
-        return this.prisma.comment.findMany({
+    async findAllByPost(postId) {
+        return this.commentRepository.find({
             where: { postId },
-            include: { author: { select: { id: true, email: true, role: true } } },
-            orderBy: { createdAt: 'desc' }
+            relations: { author: true },
+            order: { createdAt: 'DESC' }
         });
     }
     async update(id, authorId, data) {
-        const comment = await this.prisma.comment.findUnique({ where: { id } });
+        const comment = await this.commentRepository.findOne({ where: { id } });
         if (!comment)
             throw new common_1.NotFoundException('Comment not found');
         if (comment.authorId !== authorId)
             throw new common_1.ForbiddenException('You can only edit your own comments');
-        return this.prisma.comment.update({
+        comment.content = data.content;
+        await this.commentRepository.save(comment);
+        const updated = await this.commentRepository.findOne({
             where: { id },
-            data: { content: data.content },
-            include: { author: { select: { id: true, email: true, role: true } } }
+            relations: { author: true }
         });
+        if (!updated)
+            throw new common_1.NotFoundException('Comment not found after update');
+        return updated;
     }
     async remove(id, authorId, userRole) {
-        const comment = await this.prisma.comment.findUnique({ where: { id } });
+        const comment = await this.commentRepository.findOne({ where: { id } });
         if (!comment)
             throw new common_1.NotFoundException('Comment not found');
         if (comment.authorId !== authorId && userRole === 'STUDENT') {
             throw new common_1.ForbiddenException('You can only delete your own comments');
         }
-        return this.prisma.comment.delete({ where: { id } });
+        return this.commentRepository.remove(comment);
     }
 };
 exports.CommentsService = CommentsService;
 exports.CommentsService = CommentsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, typeorm_1.InjectRepository)(comment_entity_1.Comment)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], CommentsService);
 //# sourceMappingURL=comments.service.js.map

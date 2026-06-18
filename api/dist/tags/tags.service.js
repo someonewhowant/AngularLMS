@@ -8,42 +8,50 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TagsService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const tag_entity_1 = require("./entities/tag.entity");
 let TagsService = class TagsService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    tagRepository;
+    constructor(tagRepository) {
+        this.tagRepository = tagRepository;
     }
     async create(data) {
-        const existing = await this.prisma.tag.findUnique({ where: { name: data.name } });
+        const existing = await this.tagRepository.findOne({ where: { name: data.name } });
         if (existing)
             throw new common_1.ConflictException('Tag already exists');
-        return this.prisma.tag.create({ data });
+        const tag = this.tagRepository.create(data);
+        return this.tagRepository.save(tag);
     }
-    findAll() {
-        return this.prisma.tag.findMany();
+    async findAll() {
+        return this.tagRepository.find();
     }
     async findOne(id) {
-        const tag = await this.prisma.tag.findUnique({ where: { id } });
+        const tag = await this.tagRepository.findOne({ where: { id } });
         if (!tag)
             throw new common_1.NotFoundException('Tag not found');
         return tag;
     }
     async update(id, data) {
-        await this.findOne(id);
-        return this.prisma.tag.update({ where: { id }, data });
+        const tag = await this.findOne(id);
+        Object.assign(tag, data);
+        return this.tagRepository.save(tag);
     }
     async remove(id) {
-        await this.findOne(id);
-        return this.prisma.tag.delete({ where: { id } });
+        const tag = await this.findOne(id);
+        return this.tagRepository.remove(tag);
     }
 };
 exports.TagsService = TagsService;
 exports.TagsService = TagsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, typeorm_1.InjectRepository)(tag_entity_1.Tag)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], TagsService);
 //# sourceMappingURL=tags.service.js.map

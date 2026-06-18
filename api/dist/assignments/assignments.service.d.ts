@@ -1,77 +1,15 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Repository } from 'typeorm';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
+import { Assignment } from './entities/assignment.entity';
+import { CourseModule } from '../course-modules/entities/course-module.entity';
 export declare class AssignmentsService {
-    private prisma;
-    constructor(prisma: PrismaService);
-    create(teacherId: number, userRole: string, data: CreateAssignmentDto): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        description: string;
-        maxScore: number;
-        dueDate: Date | null;
-        moduleId: number;
-    }>;
-    findAllByModule(moduleId: number): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        description: string;
-        maxScore: number;
-        dueDate: Date | null;
-        moduleId: number;
-    }[]>;
-    findOne(id: number): Promise<{
-        module: {
-            course: {
-                id: number;
-                createdAt: Date;
-                updatedAt: Date;
-                title: string;
-                description: string | null;
-                isPublished: boolean;
-                teacherId: number;
-            };
-        } & {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            title: string;
-            content: string | null;
-            order: number;
-            courseId: number;
-        };
-    } & {
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        description: string;
-        maxScore: number;
-        dueDate: Date | null;
-        moduleId: number;
-    }>;
-    update(id: number, teacherId: number, userRole: string, data: UpdateAssignmentDto): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        description: string;
-        maxScore: number;
-        dueDate: Date | null;
-        moduleId: number;
-    }>;
-    remove(id: number, teacherId: number, userRole: string): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        title: string;
-        description: string;
-        maxScore: number;
-        dueDate: Date | null;
-        moduleId: number;
-    }>;
+    private assignmentRepository;
+    private moduleRepository;
+    constructor(assignmentRepository: Repository<Assignment>, moduleRepository: Repository<CourseModule>);
+    create(teacherId: number, userRole: string, data: CreateAssignmentDto): Promise<Assignment>;
+    findAllByModule(moduleId: number): Promise<Assignment[]>;
+    findOne(id: number): Promise<Assignment>;
+    update(id: number, teacherId: number, userRole: string, data: UpdateAssignmentDto): Promise<Assignment>;
+    remove(id: number, teacherId: number, userRole: string): Promise<Assignment>;
 }

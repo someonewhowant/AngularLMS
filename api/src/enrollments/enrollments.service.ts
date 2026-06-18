@@ -1,23 +1,29 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
+import { Enrollment } from './entities/enrollment.entity';
+import { Course } from '../courses/entities/course.entity';
 
 @Injectable()
 export class EnrollmentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Enrollment)
+    private enrollmentRepository: Repository<Enrollment>,
+    @InjectRepository(Course)
+    private courseRepository: Repository<Course>
+  ) {}
 
-  async enroll(userId: number, data: CreateEnrollmentDto) {
-    const course = await this.prisma.course.findUnique({ where: { id: data.courseId } });
+  async enroll(userId: number, data: CreateEnrollmentDto): Promise<Enrollment> {
+    const course = await this.courseRepository.findOne({ where: { id: data.courseId } });
     if (!course) {
       throw new NotFoundException('Course not found');
     }
 
-    const existing = await this.prisma.enrollment.findUnique({
+    const existing = await this.enrollmentRepository.findOne({
       where: {
-        userId_courseId: {
-          userId,
-          courseId: data.courseId,
-        }
+        userId,
+        courseId: data.courseId,
       }
     });
 
@@ -25,35 +31,42 @@ export class EnrollmentsService {
       throw new ConflictException('You are already enrolled in this course');
     }
 
-    return this.prisma.enrollment.create({
-      data: { userId, courseId: data.courseId },
-      include: { course: true }
+    const enrollment = this.enrollmentRepository.create({
+      userId,
+      courseId: data.courseId
     });
+
+    await this.enrollmentRepository.save(enrollment);
+
+    const saved = await this.enrollmentRepository.findOne({
+      where: { id: enrollment.id },
+      relations: { course: true }
+    });
+    if (!saved) throw new NotFoundException('Enrollment not found after creation');
+    return saved;
   }
 
-  findAllByUser(userId: number) {
-    return this.prisma.enrollment.findMany({
+  async findAllByUser(userId: number): Promise<Enrollment[]> {
+    return this.enrollmentRepository.find({
       where: { userId },
-      include: { 
+      relations: { 
         course: {
-          include: { teacher: { select: { id: true, email: true, role: true } } }
+          teacher: true
         }
       },
-      orderBy: { createdAt: 'desc' }
+      order: { createdAt: 'DESC' }
     });
   }
 
-  async unenroll(userId: number, courseId: number) {
-    const enrollment = await this.prisma.enrollment.findUnique({
-      where: { userId_courseId: { userId, courseId } }
+  async unenroll(userId: number, courseId: number): Promise<Enrollment> {
+    const enrollment = await this.enrollmentRepository.findOne({
+      where: { userId, courseId }
     });
 
     if (!enrollment) {
       throw new NotFoundException('Enrollment not found');
     }
 
-    return this.prisma.enrollment.delete({
-      where: { userId_courseId: { userId, courseId } }
-    });
+    return this.enrollmentRepository.remove(enrollment);
   }
 }

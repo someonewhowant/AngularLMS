@@ -37,8 +37,8 @@ export declare class AchievementsService {
     } & {
         id: number;
         userId: number;
-        awardedAt: Date;
         achievementId: number;
+        awardedAt: Date;
     }) | null>;
     getMyAchievements(userId: number): import(".prisma/client").Prisma.PrismaPromise<({
         achievement: {
@@ -54,8 +54,8 @@ export declare class AchievementsService {
     } & {
         id: number;
         userId: number;
-        awardedAt: Date;
         achievementId: number;
+        awardedAt: Date;
     })[]>;
     getLeaderboard(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;

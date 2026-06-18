@@ -4,39 +4,9 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export declare class CategoriesController {
     private readonly categoriesService;
     constructor(categoriesService: CategoriesService);
-    create(createCategoryDto: CreateCategoryDto): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        description: string | null;
-    }>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        description: string | null;
-    }[]>;
-    findOne(id: number): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        description: string | null;
-    }>;
-    update(id: number, updateCategoryDto: UpdateCategoryDto): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        description: string | null;
-    }>;
-    remove(id: number): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        description: string | null;
-    }>;
+    create(createCategoryDto: CreateCategoryDto): Promise<import("./entities/category.entity").Category>;
+    findAll(): Promise<import("./entities/category.entity").Category[]>;
+    findOne(id: number): Promise<import("./entities/category.entity").Category>;
+    update(id: number, updateCategoryDto: UpdateCategoryDto): Promise<import("./entities/category.entity").Category>;
+    remove(id: number): Promise<import("./entities/category.entity").Category>;
 }

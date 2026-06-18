@@ -38,7 +38,7 @@ exports.BookmarksController = BookmarksController;
 __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Add a post to bookmarks' }),
-    openapi.ApiResponse({ status: 201, type: Object }),
+    openapi.ApiResponse({ status: 201, type: require("./entities/bookmark.entity").Bookmark }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -48,7 +48,7 @@ __decorate([
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: 'Get all my bookmarks' }),
-    openapi.ApiResponse({ status: 200, type: Object }),
+    openapi.ApiResponse({ status: 200, type: [require("./entities/bookmark.entity").Bookmark] }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -57,7 +57,7 @@ __decorate([
 __decorate([
     (0, common_1.Delete)(':postId'),
     (0, swagger_1.ApiOperation)({ summary: 'Remove a post from bookmarks' }),
-    openapi.ApiResponse({ status: 200 }),
+    openapi.ApiResponse({ status: 200, type: require("./entities/bookmark.entity").Bookmark }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Param)('postId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

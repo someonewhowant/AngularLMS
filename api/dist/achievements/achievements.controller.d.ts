@@ -37,8 +37,8 @@ export declare class AchievementsController {
     } & {
         id: number;
         userId: number;
-        awardedAt: Date;
         achievementId: number;
+        awardedAt: Date;
     })[]>;
     getLeaderboard(): import(".prisma/client").Prisma.PrismaPromise<{
         id: number;

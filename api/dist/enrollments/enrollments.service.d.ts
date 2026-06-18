@@ -1,50 +1,12 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Repository } from 'typeorm';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
+import { Enrollment } from './entities/enrollment.entity';
+import { Course } from '../courses/entities/course.entity';
 export declare class EnrollmentsService {
-    private prisma;
-    constructor(prisma: PrismaService);
-    enroll(userId: number, data: CreateEnrollmentDto): Promise<{
-        course: {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            title: string;
-            description: string | null;
-            isPublished: boolean;
-            teacherId: number;
-        };
-    } & {
-        id: number;
-        createdAt: Date;
-        userId: number;
-        courseId: number;
-    }>;
-    findAllByUser(userId: number): import(".prisma/client").Prisma.PrismaPromise<({
-        course: {
-            teacher: {
-                id: number;
-                email: string;
-                role: string;
-            };
-        } & {
-            id: number;
-            createdAt: Date;
-            updatedAt: Date;
-            title: string;
-            description: string | null;
-            isPublished: boolean;
-            teacherId: number;
-        };
-    } & {
-        id: number;
-        createdAt: Date;
-        userId: number;
-        courseId: number;
-    })[]>;
-    unenroll(userId: number, courseId: number): Promise<{
-        id: number;
-        createdAt: Date;
-        userId: number;
-        courseId: number;
-    }>;
+    private enrollmentRepository;
+    private courseRepository;
+    constructor(enrollmentRepository: Repository<Enrollment>, courseRepository: Repository<Course>);
+    enroll(userId: number, data: CreateEnrollmentDto): Promise<Enrollment>;
+    findAllByUser(userId: number): Promise<Enrollment[]>;
+    unenroll(userId: number, courseId: number): Promise<Enrollment>;
 }

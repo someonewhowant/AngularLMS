@@ -1,45 +1,60 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { Comment } from './entities/comment.entity';
 
 @Injectable()
 export class CommentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>
+  ) {}
 
-  create(authorId: number, data: CreateCommentDto) {
-    return this.prisma.comment.create({
-      data: {
-        content: data.content,
-        postId: data.postId,
-        authorId,
-      },
-      include: { author: { select: { id: true, email: true, role: true } } }
+  async create(authorId: number, data: CreateCommentDto): Promise<Comment> {
+    const comment = this.commentRepository.create({
+      content: data.content,
+      postId: data.postId,
+      authorId,
     });
+    
+    await this.commentRepository.save(comment);
+
+    const saved = await this.commentRepository.findOne({
+      where: { id: comment.id },
+      relations: { author: true }
+    });
+    if (!saved) throw new NotFoundException('Comment not found after creation');
+    return saved;
   }
 
-  findAllByPost(postId: number) {
-    return this.prisma.comment.findMany({
+  async findAllByPost(postId: number): Promise<Comment[]> {
+    return this.commentRepository.find({
       where: { postId },
-      include: { author: { select: { id: true, email: true, role: true } } },
-      orderBy: { createdAt: 'desc' }
+      relations: { author: true },
+      order: { createdAt: 'DESC' }
     });
   }
 
-  async update(id: number, authorId: number, data: UpdateCommentDto) {
-    const comment = await this.prisma.comment.findUnique({ where: { id } });
+  async update(id: number, authorId: number, data: UpdateCommentDto): Promise<Comment> {
+    const comment = await this.commentRepository.findOne({ where: { id } });
     if (!comment) throw new NotFoundException('Comment not found');
     if (comment.authorId !== authorId) throw new ForbiddenException('You can only edit your own comments');
     
-    return this.prisma.comment.update({
+    comment.content = data.content;
+    await this.commentRepository.save(comment);
+
+    const updated = await this.commentRepository.findOne({
       where: { id },
-      data: { content: data.content },
-      include: { author: { select: { id: true, email: true, role: true } } }
+      relations: { author: true }
     });
+    if (!updated) throw new NotFoundException('Comment not found after update');
+    return updated;
   }
 
-  async remove(id: number, authorId: number, userRole: string) {
-    const comment = await this.prisma.comment.findUnique({ where: { id } });
+  async remove(id: number, authorId: number, userRole: string): Promise<Comment> {
+    const comment = await this.commentRepository.findOne({ where: { id } });
     if (!comment) throw new NotFoundException('Comment not found');
     
     // Admins and teachers can delete any comment, students only their own
@@ -47,6 +62,6 @@ export class CommentsService {
       throw new ForbiddenException('You can only delete your own comments');
     }
 
-    return this.prisma.comment.delete({ where: { id } });
+    return this.commentRepository.remove(comment);
   }
 }

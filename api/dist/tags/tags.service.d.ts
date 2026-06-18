@@ -1,32 +1,13 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { Tag } from './entities/tag.entity';
 export declare class TagsService {
-    private prisma;
-    constructor(prisma: PrismaService);
-    create(data: CreateTagDto): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
-    }>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
-        createdAt: Date;
-        name: string;
-    }[]>;
-    findOne(id: number): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
-    }>;
-    update(id: number, data: UpdateTagDto): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
-    }>;
-    remove(id: number): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
-    }>;
+    private tagRepository;
+    constructor(tagRepository: Repository<Tag>);
+    create(data: CreateTagDto): Promise<Tag>;
+    findAll(): Promise<Tag[]>;
+    findOne(id: number): Promise<Tag>;
+    update(id: number, data: UpdateTagDto): Promise<Tag>;
+    remove(id: number): Promise<Tag>;
 }

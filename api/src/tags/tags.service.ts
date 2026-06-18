@@ -1,35 +1,43 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class TagsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Tag)
+    private tagRepository: Repository<Tag>
+  ) {}
 
-  async create(data: CreateTagDto) {
-    const existing = await this.prisma.tag.findUnique({ where: { name: data.name } });
+  async create(data: CreateTagDto): Promise<Tag> {
+    const existing = await this.tagRepository.findOne({ where: { name: data.name } });
     if (existing) throw new ConflictException('Tag already exists');
-    return this.prisma.tag.create({ data });
+    
+    const tag = this.tagRepository.create(data);
+    return this.tagRepository.save(tag);
   }
 
-  findAll() {
-    return this.prisma.tag.findMany();
+  async findAll(): Promise<Tag[]> {
+    return this.tagRepository.find();
   }
 
-  async findOne(id: number) {
-    const tag = await this.prisma.tag.findUnique({ where: { id } });
+  async findOne(id: number): Promise<Tag> {
+    const tag = await this.tagRepository.findOne({ where: { id } });
     if (!tag) throw new NotFoundException('Tag not found');
     return tag;
   }
 
-  async update(id: number, data: UpdateTagDto) {
-    await this.findOne(id);
-    return this.prisma.tag.update({ where: { id }, data });
+  async update(id: number, data: UpdateTagDto): Promise<Tag> {
+    const tag = await this.findOne(id);
+    Object.assign(tag, data);
+    return this.tagRepository.save(tag);
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
-    return this.prisma.tag.delete({ where: { id } });
+  async remove(id: number): Promise<Tag> {
+    const tag = await this.findOne(id);
+    return this.tagRepository.remove(tag);
   }
 }

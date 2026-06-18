@@ -8,38 +8,51 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CourseModulesService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const course_module_entity_1 = require("./entities/course-module.entity");
+const course_entity_1 = require("../courses/entities/course.entity");
 let CourseModulesService = class CourseModulesService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    moduleRepository;
+    courseRepository;
+    constructor(moduleRepository, courseRepository) {
+        this.moduleRepository = moduleRepository;
+        this.courseRepository = courseRepository;
     }
     async create(teacherId, userRole, data) {
-        const course = await this.prisma.course.findUnique({ where: { id: data.courseId } });
+        const course = await this.courseRepository.findOne({ where: { id: data.courseId } });
         if (!course)
             throw new common_1.NotFoundException('Course not found');
         if (course.teacherId !== teacherId && userRole !== 'ADMIN') {
             throw new common_1.ForbiddenException('You can only add modules to your own courses');
         }
-        return this.prisma.courseModule.create({
-            data,
-            include: { assignments: true }
+        const module = this.moduleRepository.create(data);
+        await this.moduleRepository.save(module);
+        const saved = await this.moduleRepository.findOne({
+            where: { id: module.id },
+            relations: { assignments: true },
         });
+        if (!saved)
+            throw new common_1.NotFoundException('Module not found after creation');
+        return saved;
     }
-    findAllByCourse(courseId) {
-        return this.prisma.courseModule.findMany({
+    async findAllByCourse(courseId) {
+        return this.moduleRepository.find({
             where: { courseId },
-            orderBy: { order: 'asc' },
-            include: { assignments: true }
+            order: { order: 'ASC' },
+            relations: { assignments: true }
         });
     }
     async findOne(id) {
-        const module = await this.prisma.courseModule.findUnique({
+        const module = await this.moduleRepository.findOne({
             where: { id },
-            include: { assignments: true, course: true }
+            relations: { assignments: true, course: true }
         });
         if (!module)
             throw new common_1.NotFoundException('Module not found');
@@ -50,23 +63,30 @@ let CourseModulesService = class CourseModulesService {
         if (module.course.teacherId !== teacherId && userRole !== 'ADMIN') {
             throw new common_1.ForbiddenException('You can only update modules in your own courses');
         }
-        return this.prisma.courseModule.update({
+        Object.assign(module, data);
+        await this.moduleRepository.save(module);
+        const updated = await this.moduleRepository.findOne({
             where: { id },
-            data,
-            include: { assignments: true }
+            relations: { assignments: true }
         });
+        if (!updated)
+            throw new common_1.NotFoundException('Module not found after update');
+        return updated;
     }
     async remove(id, teacherId, userRole) {
         const module = await this.findOne(id);
         if (module.course.teacherId !== teacherId && userRole !== 'ADMIN') {
             throw new common_1.ForbiddenException('You can only delete modules from your own courses');
         }
-        return this.prisma.courseModule.delete({ where: { id } });
+        return this.moduleRepository.remove(module);
     }
 };
 exports.CourseModulesService = CourseModulesService;
 exports.CourseModulesService = CourseModulesService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, typeorm_1.InjectRepository)(course_module_entity_1.CourseModule)),
+    __param(1, (0, typeorm_1.InjectRepository)(course_entity_1.Course)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], CourseModulesService);
 //# sourceMappingURL=course-modules.service.js.map

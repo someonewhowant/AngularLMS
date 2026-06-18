@@ -1,70 +1,79 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
 import { UpdateAssignmentDto } from './dto/update-assignment.dto';
+import { Assignment } from './entities/assignment.entity';
+import { CourseModule } from '../course-modules/entities/course-module.entity';
 
 @Injectable()
 export class AssignmentsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Assignment)
+    private assignmentRepository: Repository<Assignment>,
+    @InjectRepository(CourseModule)
+    private moduleRepository: Repository<CourseModule>
+  ) { }
 
-  async create(teacherId: number, userRole: string, data: CreateAssignmentDto) {
-    const module = await this.prisma.courseModule.findUnique({
+  async create(teacherId: number, userRole: string, data: CreateAssignmentDto): Promise<Assignment> {
+    const module = await this.moduleRepository.findOne({
       where: { id: data.moduleId },
-      include: { course: true }
+      relations: { course: true }
     });
+
     if (!module) throw new NotFoundException('Module not found');
+
     if (module.course.teacherId !== teacherId && userRole !== 'ADMIN') {
       throw new ForbiddenException('You can only add assignments to your own courses');
     }
 
     const { dueDate, ...assignmentData } = data;
-    return this.prisma.assignment.create({
-      data: {
-        ...assignmentData,
-        dueDate: dueDate ? new Date(dueDate) : null,
-      }
-    });
+
+    const assignment = this.assignmentRepository.create({
+      ...assignmentData,
+      dueDate: dueDate ? new Date(dueDate) : null,
+      moduleId: module.id
+    }) as Assignment;
+
+    return this.assignmentRepository.save(assignment);
   }
 
-  findAllByModule(moduleId: number) {
-    return this.prisma.assignment.findMany({
+  async findAllByModule(moduleId: number): Promise<Assignment[]> {
+    return this.assignmentRepository.find({
       where: { moduleId },
     });
   }
 
-  async findOne(id: number) {
-    const assignment = await this.prisma.assignment.findUnique({
+  async findOne(id: number): Promise<Assignment> {
+    const assignment = await this.assignmentRepository.findOne({
       where: { id },
-      include: { module: { include: { course: true } } }
+      relations: { module: { course: true } }
     });
     if (!assignment) throw new NotFoundException('Assignment not found');
     return assignment;
   }
 
-  async update(id: number, teacherId: number, userRole: string, data: UpdateAssignmentDto) {
+  async update(id: number, teacherId: number, userRole: string, data: UpdateAssignmentDto): Promise<Assignment> {
     const assignment = await this.findOne(id);
     if (assignment.module.course.teacherId !== teacherId && userRole !== 'ADMIN') {
       throw new ForbiddenException('You can only update assignments in your own courses');
     }
 
     const { dueDate, ...assignmentData } = data;
-    const updateData: any = { ...assignmentData };
+    Object.assign(assignment, assignmentData);
     if (dueDate !== undefined) {
-      updateData.dueDate = dueDate ? new Date(dueDate) : null;
+      assignment.dueDate = dueDate ? new Date(dueDate) : null;
     }
 
-    return this.prisma.assignment.update({
-      where: { id },
-      data: updateData,
-    });
+    return this.assignmentRepository.save(assignment);
   }
 
-  async remove(id: number, teacherId: number, userRole: string) {
+  async remove(id: number, teacherId: number, userRole: string): Promise<Assignment> {
     const assignment = await this.findOne(id);
     if (assignment.module.course.teacherId !== teacherId && userRole !== 'ADMIN') {
       throw new ForbiddenException('You can only delete assignments from your own courses');
     }
 
-    return this.prisma.assignment.delete({ where: { id } });
+    return this.assignmentRepository.remove(assignment);
   }
 }

@@ -1,18 +1,21 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
+import { Bookmark } from './entities/bookmark.entity';
 
 @Injectable()
 export class BookmarksService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Bookmark)
+    private bookmarkRepository: Repository<Bookmark>
+  ) {}
 
-  async create(userId: number, data: CreateBookmarkDto) {
-    const existing = await this.prisma.bookmark.findUnique({
+  async create(userId: number, data: CreateBookmarkDto): Promise<Bookmark> {
+    const existing = await this.bookmarkRepository.findOne({
       where: {
-        userId_postId: {
-          userId,
-          postId: data.postId,
-        }
+        userId,
+        postId: data.postId,
       }
     });
 
@@ -20,35 +23,44 @@ export class BookmarksService {
       throw new ConflictException('Post is already in your bookmarks');
     }
 
-    return this.prisma.bookmark.create({
-      data: { userId, postId: data.postId },
-      include: { post: true }
+    const bookmark = this.bookmarkRepository.create({
+      userId,
+      postId: data.postId
     });
+
+    await this.bookmarkRepository.save(bookmark);
+
+    const saved = await this.bookmarkRepository.findOne({
+      where: { id: bookmark.id },
+      relations: { post: true }
+    });
+    
+    if (!saved) throw new NotFoundException('Bookmark not found after creation');
+    return saved;
   }
 
-  findAllByUser(userId: number) {
-    return this.prisma.bookmark.findMany({
+  async findAllByUser(userId: number): Promise<Bookmark[]> {
+    return this.bookmarkRepository.find({
       where: { userId },
-      include: { 
+      relations: { 
         post: {
-          include: { category: true, tags: true }
+          category: true,
+          tags: true
         } 
       },
-      orderBy: { createdAt: 'desc' }
+      order: { createdAt: 'DESC' }
     });
   }
 
-  async remove(userId: number, postId: number) {
-    const bookmark = await this.prisma.bookmark.findUnique({
-      where: { userId_postId: { userId, postId } }
+  async remove(userId: number, postId: number): Promise<Bookmark> {
+    const bookmark = await this.bookmarkRepository.findOne({
+      where: { userId, postId }
     });
 
     if (!bookmark) {
       throw new NotFoundException('Bookmark not found');
     }
 
-    return this.prisma.bookmark.delete({
-      where: { userId_postId: { userId, postId } }
-    });
+    return this.bookmarkRepository.remove(bookmark);
   }
 }

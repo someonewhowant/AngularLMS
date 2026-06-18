@@ -8,46 +8,56 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostsService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const post_entity_1 = require("./entities/post.entity");
 let PostsService = class PostsService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    postRepository;
+    constructor(postRepository) {
+        this.postRepository = postRepository;
     }
     async create(authorId, data) {
         const { tagIds, ...postData } = data;
-        return this.prisma.post.create({
-            data: {
-                ...postData,
-                authorId,
-                tags: tagIds ? {
-                    connect: tagIds.map(id => ({ id }))
-                } : undefined,
-            },
-            include: {
-                author: { select: { id: true, email: true, role: true } },
+        const post = this.postRepository.create({
+            ...postData,
+            authorId,
+        });
+        if (tagIds && tagIds.length > 0) {
+            post.tags = tagIds.map(id => ({ id }));
+        }
+        await this.postRepository.save(post);
+        const saved = await this.postRepository.findOne({
+            where: { id: post.id },
+            relations: {
+                author: true,
                 category: true,
                 tags: true,
             }
         });
+        if (!saved)
+            throw new common_1.NotFoundException('Post not found after creation');
+        return saved;
     }
-    findAll() {
-        return this.prisma.post.findMany({
-            include: {
-                author: { select: { id: true, email: true, role: true } },
+    async findAll() {
+        return this.postRepository.find({
+            relations: {
+                author: true,
                 category: true,
                 tags: true,
             }
         });
     }
     async findOne(id) {
-        const post = await this.prisma.post.findUnique({
+        const post = await this.postRepository.findOne({
             where: { id },
-            include: {
-                author: { select: { id: true, email: true, role: true } },
+            relations: {
+                author: true,
                 category: true,
                 tags: true,
             }
@@ -57,31 +67,34 @@ let PostsService = class PostsService {
         return post;
     }
     async update(id, data) {
-        await this.findOne(id);
+        const post = await this.findOne(id);
         const { tagIds, ...postData } = data;
-        return this.prisma.post.update({
+        Object.assign(post, postData);
+        if (tagIds !== undefined) {
+            post.tags = tagIds.map(tagId => ({ id: tagId }));
+        }
+        await this.postRepository.save(post);
+        const updated = await this.postRepository.findOne({
             where: { id },
-            data: {
-                ...postData,
-                tags: tagIds ? {
-                    set: tagIds.map(tagId => ({ id: tagId }))
-                } : undefined,
-            },
-            include: {
-                author: { select: { id: true, email: true, role: true } },
+            relations: {
+                author: true,
                 category: true,
                 tags: true,
             }
         });
+        if (!updated)
+            throw new common_1.NotFoundException('Post not found after update');
+        return updated;
     }
     async remove(id) {
-        await this.findOne(id);
-        return this.prisma.post.delete({ where: { id } });
+        const post = await this.findOne(id);
+        return this.postRepository.remove(post);
     }
 };
 exports.PostsService = PostsService;
 exports.PostsService = PostsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, typeorm_1.InjectRepository)(post_entity_1.Post)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], PostsService);
 //# sourceMappingURL=posts.service.js.map
