@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CourseModulesService } from './course-modules.service';
 import { CreateCourseModuleDto } from './dto/create-course-module.dto';
 import { UpdateCourseModuleDto } from './dto/update-course-module.dto';
@@ -16,10 +17,28 @@ export class CourseModulesController {
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.TEACHER, Role.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new module for a course (Teacher/Admin)' })
-  create(@Request() req: any, @Body() createCourseModuleDto: CreateCourseModuleDto) {
-    return this.courseModulesService.create(req.user.id, req.user.role, createCourseModuleDto);
+  create(
+    @Request() req: any,
+    @Body() body: any,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    const courseId = Number(body.courseId);
+    const order = body.order ? Number(body.order) : undefined;
+    let content = body.content;
+
+    if (file) {
+      content = file.buffer.toString('utf-8');
+    }
+
+    return this.courseModulesService.create(req.user.id, req.user.role, {
+      title: body.title,
+      content,
+      order,
+      courseId,
+    });
   }
 
   @Get('course/:courseId')
@@ -37,10 +56,27 @@ export class CourseModulesController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.TEACHER, Role.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a module (Teacher/Admin)' })
-  update(@Request() req: any, @Param('id', ParseIntPipe) id: number, @Body() updateCourseModuleDto: UpdateCourseModuleDto) {
-    return this.courseModulesService.update(id, req.user.id, req.user.role, updateCourseModuleDto);
+  update(
+    @Request() req: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: any,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    const order = body.order ? Number(body.order) : undefined;
+    let content = body.content;
+
+    if (file) {
+      content = file.buffer.toString('utf-8');
+    }
+
+    return this.courseModulesService.update(id, req.user.id, req.user.role, {
+      title: body.title,
+      content,
+      order,
+    });
   }
 
   @Delete(':id')

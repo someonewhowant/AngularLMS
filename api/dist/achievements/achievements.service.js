@@ -77,7 +77,7 @@ let AchievementsService = class AchievementsService {
         return this.dataSource.getRepository(user_entity_1.User).find({
             order: { points: 'DESC' },
             take: 10,
-            select: ['id', 'email', 'firstName', 'lastName', 'points', 'avatar']
+            select: { id: true, email: true, points: true }
         });
     }
 };

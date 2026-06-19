@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuizzesController = void 0;
 const openapi = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
 const quizzes_service_1 = require("./quizzes.service");
 const create_quiz_dto_1 = require("./dto/create-quiz.dto");
 const submit_quiz_dto_1 = require("./dto/submit-quiz.dto");
@@ -42,6 +43,38 @@ let QuizzesController = class QuizzesController {
     }
     getMyResults(req) {
         return this.quizzesService.getMyResults(req.user.id);
+    }
+    async importQuiz(req, body, file) {
+        const moduleId = Number(body.moduleId);
+        const format = body.format;
+        const title = body.title;
+        let content = body.content;
+        if (file) {
+            content = file.buffer.toString('utf-8');
+        }
+        if (!content) {
+            throw new common_1.BadRequestException('Content or file is required');
+        }
+        return this.quizzesService.importQuiz(req.user.id, req.user.role, {
+            moduleId,
+            format,
+            title,
+            content,
+        });
+    }
+    async importQuestions(req, id, body, file) {
+        const format = body.format;
+        let content = body.content;
+        if (file) {
+            content = file.buffer.toString('utf-8');
+        }
+        if (!content) {
+            throw new common_1.BadRequestException('Content or file is required');
+        }
+        return this.quizzesService.importQuestions(req.user.id, req.user.role, id, {
+            format,
+            content,
+        });
     }
 };
 exports.QuizzesController = QuizzesController;
@@ -97,6 +130,35 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], QuizzesController.prototype, "getMyResults", null);
+__decorate([
+    (0, common_1.Post)('import'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(role_enum_1.Role.TEACHER, role_enum_1.Role.ADMIN),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, swagger_1.ApiOperation)({ summary: 'Import a quiz from GIFT or Markdown' }),
+    openapi.ApiResponse({ status: 201, type: require("./entities/quiz.entity").Quiz }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], QuizzesController.prototype, "importQuiz", null);
+__decorate([
+    (0, common_1.Post)(':id/import-questions'),
+    (0, common_1.UseGuards)(roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(role_enum_1.Role.TEACHER, role_enum_1.Role.ADMIN),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, swagger_1.ApiOperation)({ summary: 'Import questions into a quiz from GIFT or Markdown' }),
+    openapi.ApiResponse({ status: 201, type: require("./entities/quiz.entity").Quiz }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Body)()),
+    __param(3, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, Object, Object]),
+    __metadata("design:returntype", Promise)
+], QuizzesController.prototype, "importQuestions", null);
 exports.QuizzesController = QuizzesController = __decorate([
     (0, swagger_1.ApiTags)('quizzes'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

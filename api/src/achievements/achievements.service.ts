@@ -72,7 +72,7 @@ export class AchievementsService {
     return this.dataSource.getRepository(User).find({
       order: { points: 'DESC' },
       take: 10,
-      select: { id: true, email: true, firstName: true, lastName: true, points: true, avatar: true }
+      select: { id: true, email: true, points: true }
     });
   }
 }

@@ -9,4 +9,6 @@ export declare class QuizzesController {
     getQuizForStudent(id: number): Promise<any>;
     submitQuiz(req: any, id: number, dto: SubmitQuizDto): Promise<import("./entities/user-quiz-result.entity").UserQuizResult>;
     getMyResults(req: any): Promise<import("./entities/user-quiz-result.entity").UserQuizResult[]>;
+    importQuiz(req: any, body: any, file?: Express.Multer.File): Promise<import("./entities/quiz.entity").Quiz>;
+    importQuestions(req: any, id: number, body: any, file?: Express.Multer.File): Promise<import("./entities/quiz.entity").Quiz>;
 }
