@@ -1,70 +1,78 @@
-import { Injectable, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateAchievementDto } from './dto/create-achievement.dto';
+import { Achievement } from './entities/achievement.entity';
+import { UserAchievement } from './entities/user-achievement.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class AchievementsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectRepository(Achievement) private achievementRepository: Repository<Achievement>,
+    @InjectRepository(UserAchievement) private userAchievementRepository: Repository<UserAchievement>,
+    private dataSource: DataSource
+  ) {}
 
-  async create(data: CreateAchievementDto) {
-    const existing = await this.prisma.achievement.findUnique({ where: { name: data.name } });
-    if (existing) throw new ConflictException('Achievement with this name already exists');
-    return this.prisma.achievement.create({ data });
-  }
+  async grantAchievement(userId: number, achievementName: string) {
+    const achievement = await this.achievementRepository.findOne({
+      where: { name: achievementName }
+    });
 
-  findAll() {
-    return this.prisma.achievement.findMany();
-  }
+    if (!achievement) return null;
 
-  // Business Logic for granting an achievement
-  async grantAchievement(userId: number, criteria: string) {
-    const achievement = await this.prisma.achievement.findFirst({ where: { criteria } });
-    if (!achievement) return null; // Achievement doesn't exist for this criteria
-
-    const alreadyAwarded = await this.prisma.userAchievement.findUnique({
+    const alreadyAwarded = await this.userAchievementRepository.findOne({
       where: {
-        userId_achievementId: {
-          userId,
-          achievementId: achievement.id
-        }
+        userId,
+        achievementId: achievement.id
       }
     });
 
-    if (alreadyAwarded) return null; // Already has it
+    if (alreadyAwarded) return null;
 
-    // Transaction to award and add XP
-    return this.prisma.$transaction(async (tx) => {
-      const awarded = await tx.userAchievement.create({
-        data: {
-          userId,
-          achievementId: achievement.id,
-        },
-        include: { achievement: true }
+    return this.dataSource.transaction(async (manager) => {
+      const awarded = manager.create(UserAchievement, {
+        userId,
+        achievementId: achievement.id,
       });
+      await manager.save(awarded);
 
-      await tx.user.update({
-        where: { id: userId },
-        data: { points: { increment: achievement.points } }
+      const user = await manager.findOne(User, { where: { id: userId } });
+      if (user) {
+        user.points += achievement.points;
+        await manager.save(user);
+      }
+
+      return manager.findOne(UserAchievement, {
+        where: { id: awarded.id },
+        relations: { achievement: true }
       });
-
-      return awarded;
     });
   }
 
-  getMyAchievements(userId: number) {
-    return this.prisma.userAchievement.findMany({
+  async getMyAchievements(userId: number): Promise<UserAchievement[]> {
+    return this.userAchievementRepository.find({
       where: { userId },
-      include: { achievement: true },
-      orderBy: { awardedAt: 'desc' }
+      relations: { achievement: true },
+      order: { awardedAt: 'DESC' }
     });
   }
 
-  getLeaderboard() {
-    return this.prisma.user.findMany({
-      where: { points: { gt: 0 } },
-      select: { id: true, email: true, points: true, role: true },
-      orderBy: { points: 'desc' },
-      take: 10
+  // Admin routes
+  async create(data: CreateAchievementDto): Promise<Achievement> {
+    const achievement = this.achievementRepository.create(data);
+    return this.achievementRepository.save(achievement);
+  }
+
+  async findAll(): Promise<Achievement[]> {
+    return this.achievementRepository.find();
+  }
+
+  async getLeaderboard(): Promise<User[]> {
+    return this.dataSource.getRepository(User).find({
+      order: { points: 'DESC' },
+      take: 10,
+      select: { id: true, email: true, firstName: true, lastName: true, points: true, avatar: true }
     });
   }
 }

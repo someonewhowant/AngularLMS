@@ -8,13 +8,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AchievementsModule = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
 const achievements_service_1 = require("./achievements.service");
 const achievements_controller_1 = require("./achievements.controller");
+const achievement_entity_1 = require("./entities/achievement.entity");
+const user_achievement_entity_1 = require("./entities/user-achievement.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let AchievementsModule = class AchievementsModule {
 };
 exports.AchievementsModule = AchievementsModule;
 exports.AchievementsModule = AchievementsModule = __decorate([
     (0, common_1.Module)({
+        imports: [typeorm_1.TypeOrmModule.forFeature([achievement_entity_1.Achievement, user_achievement_entity_1.UserAchievement, user_entity_1.User])],
         controllers: [achievements_controller_1.AchievementsController],
         providers: [achievements_service_1.AchievementsService],
         exports: [achievements_service_1.AchievementsService]

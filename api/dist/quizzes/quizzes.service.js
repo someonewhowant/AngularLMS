@@ -8,64 +8,80 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuizzesService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
 const achievements_service_1 = require("../achievements/achievements.service");
+const quiz_entity_1 = require("./entities/quiz.entity");
+const question_entity_1 = require("./entities/question.entity");
+const question_option_entity_1 = require("./entities/question-option.entity");
+const user_quiz_result_entity_1 = require("./entities/user-quiz-result.entity");
+const course_module_entity_1 = require("../course-modules/entities/course-module.entity");
+const user_entity_1 = require("../users/entities/user.entity");
+const user_activity_entity_1 = require("../analytics/entities/user-activity.entity");
 let QuizzesService = class QuizzesService {
-    prisma;
+    quizRepository;
+    userQuizResultRepository;
+    moduleRepository;
     achievementsService;
-    constructor(prisma, achievementsService) {
-        this.prisma = prisma;
+    dataSource;
+    constructor(quizRepository, userQuizResultRepository, moduleRepository, achievementsService, dataSource) {
+        this.quizRepository = quizRepository;
+        this.userQuizResultRepository = userQuizResultRepository;
+        this.moduleRepository = moduleRepository;
         this.achievementsService = achievementsService;
+        this.dataSource = dataSource;
     }
     async create(teacherId, userRole, data) {
-        const module = await this.prisma.courseModule.findUnique({
+        const module = await this.moduleRepository.findOne({
             where: { id: data.moduleId },
-            include: { course: true }
+            relations: { course: true }
         });
         if (!module)
             throw new common_1.NotFoundException('Module not found');
         if (module.course.teacherId !== teacherId && userRole !== 'ADMIN') {
             throw new common_1.ForbiddenException('You can only add quizzes to your own courses');
         }
-        return this.prisma.$transaction(async (tx) => {
-            const quiz = await tx.quiz.create({
-                data: {
-                    title: data.title,
-                    description: data.description,
-                    moduleId: data.moduleId,
-                }
+        return this.dataSource.transaction(async (manager) => {
+            const quiz = manager.create(quiz_entity_1.Quiz, {
+                title: data.title,
+                description: data.description,
+                moduleId: data.moduleId,
             });
-            for (const question of data.questions) {
-                await tx.question.create({
-                    data: {
-                        text: question.text,
-                        quizId: quiz.id,
-                        options: {
-                            create: question.options.map(opt => ({
-                                text: opt.text,
-                                isCorrect: opt.isCorrect,
-                            }))
-                        }
-                    }
+            await manager.save(quiz);
+            for (const q of data.questions) {
+                const question = manager.create(question_entity_1.Question, {
+                    text: q.text,
+                    quizId: quiz.id,
                 });
+                await manager.save(question);
+                const options = q.options.map(opt => manager.create(question_option_entity_1.QuestionOption, {
+                    text: opt.text,
+                    isCorrect: opt.isCorrect,
+                    questionId: question.id,
+                }));
+                await manager.save(options);
             }
-            return tx.quiz.findUnique({
+            const savedQuiz = await manager.findOne(quiz_entity_1.Quiz, {
                 where: { id: quiz.id },
-                include: { questions: { include: { options: true } } }
+                relations: { questions: { options: true } }
             });
+            if (!savedQuiz)
+                throw new common_1.NotFoundException('Quiz not found after creation');
+            return savedQuiz;
         });
     }
     async findOne(id) {
-        const quiz = await this.prisma.quiz.findUnique({
+        const quiz = await this.quizRepository.findOne({
             where: { id },
-            include: {
+            relations: {
                 questions: {
-                    include: {
-                        options: { select: { id: true, text: true, isCorrect: true } }
-                    }
+                    options: true
                 }
             }
         });
@@ -74,24 +90,31 @@ let QuizzesService = class QuizzesService {
         return quiz;
     }
     async getQuizForStudent(id) {
-        const quiz = await this.prisma.quiz.findUnique({
+        const quiz = await this.quizRepository.findOne({
             where: { id },
-            include: {
+            relations: {
                 questions: {
-                    include: {
-                        options: { select: { id: true, text: true } }
-                    }
+                    options: true
                 }
             }
         });
         if (!quiz)
             throw new common_1.NotFoundException('Quiz not found');
-        return quiz;
+        return {
+            ...quiz,
+            questions: quiz.questions.map(q => ({
+                ...q,
+                options: q.options.map(opt => ({
+                    id: opt.id,
+                    text: opt.text
+                }))
+            }))
+        };
     }
     async submitQuiz(id, userId, dto) {
-        const quiz = await this.prisma.quiz.findUnique({
+        const quiz = await this.quizRepository.findOne({
             where: { id },
-            include: { questions: { include: { options: true } } }
+            relations: { questions: { options: true } }
         });
         if (!quiz)
             throw new common_1.NotFoundException('Quiz not found');
@@ -107,28 +130,27 @@ let QuizzesService = class QuizzesService {
             }
         }
         const xpEarned = score * 10;
-        const result = await this.prisma.$transaction(async (tx) => {
-            const quizResult = await tx.userQuizResult.create({
-                data: {
-                    userId,
-                    quizId: id,
-                    score,
-                    total,
-                }
+        const result = await this.dataSource.transaction(async (manager) => {
+            const quizResult = manager.create(user_quiz_result_entity_1.UserQuizResult, {
+                userId,
+                quizId: id,
+                score,
+                total,
             });
+            await manager.save(quizResult);
             if (xpEarned > 0) {
-                await tx.user.update({
-                    where: { id: userId },
-                    data: { points: { increment: xpEarned } }
-                });
-            }
-            await tx.userActivity.create({
-                data: {
-                    userId,
-                    action: 'SUBMIT_QUIZ',
-                    details: `Quiz ID: ${id}, Score: ${score}/${total}, XP Earned: ${xpEarned}`,
+                const user = await manager.findOne(user_entity_1.User, { where: { id: userId } });
+                if (user) {
+                    user.points += xpEarned;
+                    await manager.save(user);
                 }
+            }
+            const activity = manager.create(user_activity_entity_1.UserActivity, {
+                userId,
+                action: 'SUBMIT_QUIZ',
+                details: `Quiz ID: ${id}, Score: ${score}/${total}, XP Earned: ${xpEarned}`,
             });
+            await manager.save(activity);
             return quizResult;
         });
         if (score === total && total > 0) {
@@ -137,17 +159,23 @@ let QuizzesService = class QuizzesService {
         return result;
     }
     async getMyResults(userId) {
-        return this.prisma.userQuizResult.findMany({
+        return this.userQuizResultRepository.find({
             where: { userId },
-            include: { quiz: true },
-            orderBy: { createdAt: 'desc' }
+            relations: { quiz: true },
+            order: { createdAt: 'DESC' }
         });
     }
 };
 exports.QuizzesService = QuizzesService;
 exports.QuizzesService = QuizzesService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        achievements_service_1.AchievementsService])
+    __param(0, (0, typeorm_1.InjectRepository)(quiz_entity_1.Quiz)),
+    __param(1, (0, typeorm_1.InjectRepository)(user_quiz_result_entity_1.UserQuizResult)),
+    __param(2, (0, typeorm_1.InjectRepository)(course_module_entity_1.CourseModule)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        achievements_service_1.AchievementsService,
+        typeorm_2.DataSource])
 ], QuizzesService);
 //# sourceMappingURL=quizzes.service.js.map

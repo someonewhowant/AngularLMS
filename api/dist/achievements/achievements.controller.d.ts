@@ -3,47 +3,8 @@ import { CreateAchievementDto } from './dto/create-achievement.dto';
 export declare class AchievementsController {
     private readonly achievementsService;
     constructor(achievementsService: AchievementsService);
-    create(createAchievementDto: CreateAchievementDto): Promise<{
-        id: number;
-        points: number;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        description: string;
-        iconUrl: string | null;
-        criteria: string;
-    }>;
-    findAll(): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
-        points: number;
-        createdAt: Date;
-        updatedAt: Date;
-        name: string;
-        description: string;
-        iconUrl: string | null;
-        criteria: string;
-    }[]>;
-    getMyAchievements(req: any): import(".prisma/client").Prisma.PrismaPromise<({
-        achievement: {
-            id: number;
-            points: number;
-            createdAt: Date;
-            updatedAt: Date;
-            name: string;
-            description: string;
-            iconUrl: string | null;
-            criteria: string;
-        };
-    } & {
-        id: number;
-        userId: number;
-        achievementId: number;
-        awardedAt: Date;
-    })[]>;
-    getLeaderboard(): import(".prisma/client").Prisma.PrismaPromise<{
-        id: number;
-        email: string;
-        role: string;
-        points: number;
-    }[]>;
+    create(createAchievementDto: CreateAchievementDto): Promise<import("./entities/achievement.entity").Achievement>;
+    findAll(): Promise<import("./entities/achievement.entity").Achievement[]>;
+    getMyAchievements(req: any): Promise<import("./entities/user-achievement.entity").UserAchievement[]>;
+    getLeaderboard(): Promise<import("../users/entities/user.entity").User[]>;
 }

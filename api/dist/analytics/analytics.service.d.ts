@@ -1,29 +1,20 @@
-import { PrismaService } from '../prisma/prisma.service';
+import { Repository } from 'typeorm';
 import { TrackActivityDto } from './dto/track-activity.dto';
 import { AchievementsService } from '../achievements/achievements.service';
+import { UserActivity } from './entities/user-activity.entity';
+import { User } from '../users/entities/user.entity';
 export declare class AnalyticsService {
-    private prisma;
+    private activityRepository;
+    private userRepository;
     private achievementsService;
-    constructor(prisma: PrismaService, achievementsService: AchievementsService);
-    trackActivity(userId: number, dto: TrackActivityDto): Promise<{
-        id: number;
-        createdAt: Date;
-        userId: number;
-        action: string;
-        details: string | null;
-    }>;
+    constructor(activityRepository: Repository<UserActivity>, userRepository: Repository<User>, achievementsService: AchievementsService);
+    trackActivity(userId: number, dto: TrackActivityDto): Promise<UserActivity>;
     getDashboard(userId: number): Promise<{
         points: number;
         totalEnrollments: number;
         totalQuizzesTaken: number;
         totalAchievements: number;
-        lastLoginAt: Date | null | undefined;
-        recentActivities: {
-            id: number;
-            createdAt: Date;
-            userId: number;
-            action: string;
-            details: string | null;
-        }[];
+        lastLoginAt: Date | undefined;
+        recentActivities: UserActivity[];
     }>;
 }

@@ -8,15 +8,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsModule = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
 const analytics_service_1 = require("./analytics.service");
 const analytics_controller_1 = require("./analytics.controller");
 const achievements_module_1 = require("../achievements/achievements.module");
+const user_activity_entity_1 = require("./entities/user-activity.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let AnalyticsModule = class AnalyticsModule {
 };
 exports.AnalyticsModule = AnalyticsModule;
 exports.AnalyticsModule = AnalyticsModule = __decorate([
     (0, common_1.Module)({
-        imports: [achievements_module_1.AchievementsModule],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([user_activity_entity_1.UserActivity, user_entity_1.User]),
+            achievements_module_1.AchievementsModule
+        ],
         controllers: [analytics_controller_1.AnalyticsController],
         providers: [analytics_service_1.AnalyticsService],
         exports: [analytics_service_1.AnalyticsService]

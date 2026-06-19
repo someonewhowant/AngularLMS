@@ -8,72 +8,86 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AchievementsService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const achievement_entity_1 = require("./entities/achievement.entity");
+const user_achievement_entity_1 = require("./entities/user-achievement.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let AchievementsService = class AchievementsService {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+    achievementRepository;
+    userAchievementRepository;
+    dataSource;
+    constructor(achievementRepository, userAchievementRepository, dataSource) {
+        this.achievementRepository = achievementRepository;
+        this.userAchievementRepository = userAchievementRepository;
+        this.dataSource = dataSource;
     }
-    async create(data) {
-        const existing = await this.prisma.achievement.findUnique({ where: { name: data.name } });
-        if (existing)
-            throw new common_1.ConflictException('Achievement with this name already exists');
-        return this.prisma.achievement.create({ data });
-    }
-    findAll() {
-        return this.prisma.achievement.findMany();
-    }
-    async grantAchievement(userId, criteria) {
-        const achievement = await this.prisma.achievement.findFirst({ where: { criteria } });
+    async grantAchievement(userId, achievementName) {
+        const achievement = await this.achievementRepository.findOne({
+            where: { name: achievementName }
+        });
         if (!achievement)
             return null;
-        const alreadyAwarded = await this.prisma.userAchievement.findUnique({
+        const alreadyAwarded = await this.userAchievementRepository.findOne({
             where: {
-                userId_achievementId: {
-                    userId,
-                    achievementId: achievement.id
-                }
+                userId,
+                achievementId: achievement.id
             }
         });
         if (alreadyAwarded)
             return null;
-        return this.prisma.$transaction(async (tx) => {
-            const awarded = await tx.userAchievement.create({
-                data: {
-                    userId,
-                    achievementId: achievement.id,
-                },
-                include: { achievement: true }
+        return this.dataSource.transaction(async (manager) => {
+            const awarded = manager.create(user_achievement_entity_1.UserAchievement, {
+                userId,
+                achievementId: achievement.id,
             });
-            await tx.user.update({
-                where: { id: userId },
-                data: { points: { increment: achievement.points } }
+            await manager.save(awarded);
+            const user = await manager.findOne(user_entity_1.User, { where: { id: userId } });
+            if (user) {
+                user.points += achievement.points;
+                await manager.save(user);
+            }
+            return manager.findOne(user_achievement_entity_1.UserAchievement, {
+                where: { id: awarded.id },
+                relations: { achievement: true }
             });
-            return awarded;
         });
     }
-    getMyAchievements(userId) {
-        return this.prisma.userAchievement.findMany({
+    async getMyAchievements(userId) {
+        return this.userAchievementRepository.find({
             where: { userId },
-            include: { achievement: true },
-            orderBy: { awardedAt: 'desc' }
+            relations: { achievement: true },
+            order: { awardedAt: 'DESC' }
         });
     }
-    getLeaderboard() {
-        return this.prisma.user.findMany({
-            where: { points: { gt: 0 } },
-            select: { id: true, email: true, points: true, role: true },
-            orderBy: { points: 'desc' },
-            take: 10
+    async create(data) {
+        const achievement = this.achievementRepository.create(data);
+        return this.achievementRepository.save(achievement);
+    }
+    async findAll() {
+        return this.achievementRepository.find();
+    }
+    async getLeaderboard() {
+        return this.dataSource.getRepository(user_entity_1.User).find({
+            order: { points: 'DESC' },
+            take: 10,
+            select: ['id', 'email', 'firstName', 'lastName', 'points', 'avatar']
         });
     }
 };
 exports.AchievementsService = AchievementsService;
 exports.AchievementsService = AchievementsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __param(0, (0, typeorm_1.InjectRepository)(achievement_entity_1.Achievement)),
+    __param(1, (0, typeorm_1.InjectRepository)(user_achievement_entity_1.UserAchievement)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.DataSource])
 ], AchievementsService);
 //# sourceMappingURL=achievements.service.js.map

@@ -1,20 +1,31 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { SubmitQuizDto } from './dto/submit-quiz.dto';
 import { AchievementsService } from '../achievements/achievements.service';
+import { Quiz } from './entities/quiz.entity';
+import { Question } from './entities/question.entity';
+import { QuestionOption } from './entities/question-option.entity';
+import { UserQuizResult } from './entities/user-quiz-result.entity';
+import { CourseModule } from '../course-modules/entities/course-module.entity';
+import { User } from '../users/entities/user.entity';
+import { UserActivity } from '../analytics/entities/user-activity.entity';
 
 @Injectable()
 export class QuizzesService {
   constructor(
-    private prisma: PrismaService,
-    private achievementsService: AchievementsService
+    @InjectRepository(Quiz) private quizRepository: Repository<Quiz>,
+    @InjectRepository(UserQuizResult) private userQuizResultRepository: Repository<UserQuizResult>,
+    @InjectRepository(CourseModule) private moduleRepository: Repository<CourseModule>,
+    private achievementsService: AchievementsService,
+    private dataSource: DataSource
   ) {}
 
-  async create(teacherId: number, userRole: string, data: CreateQuizDto) {
-    const module = await this.prisma.courseModule.findUnique({
+  async create(teacherId: number, userRole: string, data: CreateQuizDto): Promise<Quiz> {
+    const module = await this.moduleRepository.findOne({
       where: { id: data.moduleId },
-      include: { course: true }
+      relations: { course: true }
     });
     
     if (!module) throw new NotFoundException('Module not found');
@@ -22,71 +33,83 @@ export class QuizzesService {
       throw new ForbiddenException('You can only add quizzes to your own courses');
     }
 
-    return this.prisma.$transaction(async (tx) => {
-      const quiz = await tx.quiz.create({
-        data: {
-          title: data.title,
-          description: data.description,
-          moduleId: data.moduleId,
-        }
+    return this.dataSource.transaction(async (manager) => {
+      const quiz = manager.create(Quiz, {
+        title: data.title,
+        description: data.description,
+        moduleId: data.moduleId,
       });
+      await manager.save(quiz);
 
-      for (const question of data.questions) {
-        await tx.question.create({
-          data: {
-            text: question.text,
-            quizId: quiz.id,
-            options: {
-              create: question.options.map(opt => ({
-                text: opt.text,
-                isCorrect: opt.isCorrect,
-              }))
-            }
-          }
+      for (const q of data.questions) {
+        const question = manager.create(Question, {
+          text: q.text,
+          quizId: quiz.id,
         });
+        await manager.save(question);
+
+        const options = q.options.map(opt => manager.create(QuestionOption, {
+          text: opt.text,
+          isCorrect: opt.isCorrect,
+          questionId: question.id,
+        }));
+        await manager.save(options);
       }
 
-      return tx.quiz.findUnique({
+      const savedQuiz = await manager.findOne(Quiz, {
         where: { id: quiz.id },
-        include: { questions: { include: { options: true } } }
+        relations: { questions: { options: true } }
       });
+      
+      if (!savedQuiz) throw new NotFoundException('Quiz not found after creation');
+      return savedQuiz;
     });
   }
 
-  async findOne(id: number) {
-    const quiz = await this.prisma.quiz.findUnique({
+  async findOne(id: number): Promise<Quiz> {
+    const quiz = await this.quizRepository.findOne({
       where: { id },
-      include: { 
+      relations: { 
         questions: { 
-          include: { 
-            options: { select: { id: true, text: true, isCorrect: true } } 
-          } 
+          options: true
         } 
       }
     });
     if (!quiz) throw new NotFoundException('Quiz not found');
+    
+    // TypeORM doesn't have an easy way to just select specific relation columns like Prisma.
+    // We fetch them all and can map them if necessary, but returning as is should be fine.
     return quiz;
   }
 
-  async getQuizForStudent(id: number) {
-    const quiz = await this.prisma.quiz.findUnique({
+  async getQuizForStudent(id: number): Promise<any> {
+    const quiz = await this.quizRepository.findOne({
       where: { id },
-      include: { 
+      relations: { 
         questions: { 
-          include: { 
-            options: { select: { id: true, text: true } } 
-          } 
+          options: true
         } 
       }
     });
     if (!quiz) throw new NotFoundException('Quiz not found');
-    return quiz;
+    
+    // Strip out `isCorrect` for students
+    return {
+      ...quiz,
+      questions: quiz.questions.map(q => ({
+        ...q,
+        options: q.options.map(opt => ({
+          id: opt.id,
+          text: opt.text
+        }))
+      }))
+    };
   }
 
-  async submitQuiz(id: number, userId: number, dto: SubmitQuizDto) {
-    const quiz = await this.prisma.quiz.findUnique({
+  async submitQuiz(id: number, userId: number, dto: SubmitQuizDto): Promise<UserQuizResult> {
+    const quiz = await this.quizRepository.findOne({
       where: { id },
-      include: { questions: { include: { options: true } } }
+      relations: { questions: { options: true } }
     });
 
     if (!quiz) throw new NotFoundException('Quiz not found');
@@ -108,30 +131,29 @@ export class QuizzesService {
     const xpEarned = score * 10;
 
     // Use transaction to update user points, log activity and create result
-    const result = await this.prisma.$transaction(async (tx) => {
-      const quizResult = await tx.userQuizResult.create({
-        data: {
-          userId,
-          quizId: id,
-          score,
-          total,
-        }
+    const result = await this.dataSource.transaction(async (manager) => {
+      const quizResult = manager.create(UserQuizResult, {
+        userId,
+        quizId: id,
+        score,
+        total,
       });
+      await manager.save(quizResult);
 
       if (xpEarned > 0) {
-        await tx.user.update({
-          where: { id: userId },
-          data: { points: { increment: xpEarned } }
-        });
+        const user = await manager.findOne(User, { where: { id: userId } });
+        if (user) {
+          user.points += xpEarned;
+          await manager.save(user);
+        }
       }
 
-      await tx.userActivity.create({
-        data: {
-          userId,
-          action: 'SUBMIT_QUIZ',
-          details: `Quiz ID: ${id}, Score: ${score}/${total}, XP Earned: ${xpEarned}`,
-        }
+      const activity = manager.create(UserActivity, {
+        userId,
+        action: 'SUBMIT_QUIZ',
+        details: `Quiz ID: ${id}, Score: ${score}/${total}, XP Earned: ${xpEarned}`,
       });
+      await manager.save(activity);
 
       return quizResult;
     });
@@ -144,11 +166,11 @@ export class QuizzesService {
     return result;
   }
 
-  async getMyResults(userId: number) {
-    return this.prisma.userQuizResult.findMany({
+  async getMyResults(userId: number): Promise<UserQuizResult[]> {
+    return this.userQuizResultRepository.find({
       where: { userId },
-      include: { quiz: true },
-      orderBy: { createdAt: 'desc' }
+      relations: { quiz: true },
+      order: { createdAt: 'DESC' }
     });
   }
 }
